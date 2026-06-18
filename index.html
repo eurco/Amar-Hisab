@@ -136,9 +136,62 @@ input:checked+.slider:before{transform:translateX(20px);}
 .dark .rem-alert{background:#3d2e00!important;border-color:#f39c12!important;}
 .dark .rem-alert .rem-msg{color:#fcd97a!important;}
 
+/* AUTH SCREEN */
+#auth-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a3a5c,#048a81);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-card{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.3);}
+.auth-logo{text-align:center;margin-bottom:20px;}
+.auth-logo-icon{font-size:48px;}
+.auth-logo-title{font-size:22px;font-weight:800;color:#1a3a5c;margin-top:6px;}
+.auth-logo-sub{font-size:12px;color:#6b7280;margin-top:2px;}
+.auth-tabs{display:flex;background:#f0f4f8;border-radius:10px;padding:3px;margin-bottom:20px;}
+.auth-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#6b7280;transition:all 0.2s;}
+.auth-tab.active{background:#1a3a5c;color:white;}
+.auth-input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;color:#1a1a2e;outline:none;margin-bottom:12px;box-sizing:border-box;}
+.auth-input:focus{border-color:#048a81;}
+.auth-btn{width:100%;padding:13px;background:#048a81;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;}
+.auth-btn:hover{background:#036d66;}
+.auth-err{background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:12px;display:none;}
+.auth-loading{text-align:center;padding:10px;color:#6b7280;font-size:13px;display:none;}
+#app-content{display:none;}
+.user-bar{background:#0d4a3a;color:white;padding:6px 16px;font-size:11px;display:flex;align-items:center;justify-content:space-between;}
+.sync-status{font-size:10px;opacity:0.75;}
+.btn-logout{background:rgba(255,255,255,0.15);border:none;color:white;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;}
+
 </style>
 </head>
 <body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">💰</div>
+      <div class="auth-logo-title">Amar Hisab</div>
+      <div class="auth-logo-sub">আপনার ব্যক্তিগত হিসাবের অ্যাপ</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Login</div>
+      <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</div>
+    </div>
+    <div id="auth-err" class="auth-err"></div>
+    <div id="auth-loading" class="auth-loading">⏳ অনুগ্রহ করে অপেক্ষা করুন...</div>
+    <input class="auth-input" type="email" id="auth-email" placeholder="📧 Email address">
+    <input class="auth-input" type="password" id="auth-pass" placeholder="🔒 Password">
+    <input class="auth-input" type="password" id="auth-pass2" placeholder="🔒 Confirm Password" style="display:none;">
+    <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">🔐 Login</button>
+    <div style="text-align:center;margin-top:14px;font-size:11px;color:#6b7280;">আপনার data শুধু আপনিই দেখতে পাবেন 🔒</div>
+  </div>
+</div>
+
+<!-- APP CONTENT -->
+<div id="app-content">
+<div class="user-bar">
+  <span id="user-email-display">👤 Loading...</span>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="sync-status" id="sync-status">✅ Synced</span>
+    <button class="btn-logout" onclick="logoutUser()">Logout</button>
+  </div>
+</div>
 
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:10px;">
@@ -627,6 +680,8 @@ input:checked+.slider:before{transform:translateX(20px);}
 
   </div>
 </div>
+</div><!-- end app-content -->
+
 <input type="checkbox" id="dark-toggle" onchange="toggleDark()" style="display:none;">
 <div id="del-confirm" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
   <div style="background:var(--card);border-radius:14px;padding:24px;max-width:280px;width:90%;margin:auto;margin-top:40vh;box-shadow:0 8px 32px rgba(0,0,0,0.2);text-align:center;">
@@ -649,6 +704,170 @@ input:checked+.slider:before{transform:translateX(20px);}
   </div>
 </div>
 
+<script type="module">
+// ===== FIREBASE SETUP =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDgzHOjpDv8kqamRnAUULtoiji2tHfnKkI",
+  authDomain: "amar-hisab-d5fb2.firebaseapp.com",
+  projectId: "amar-hisab-d5fb2",
+  storageBucket: "amar-hisab-d5fb2.firebasestorage.app",
+  messagingSenderId: "170415251839",
+  appId: "1:170415251839:web:f12f657c165e0fe3f97a4a",
+  measurementId: "G-QCC2XEHZXT"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Expose to global scope
+window._fbAuth = auth;
+window._fbDb = db;
+window._fbFns = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, doc, setDoc, getDoc, onSnapshot };
+
+// AUTH STATE LISTENER
+onAuthStateChanged(auth, function(user) {
+  if (user) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    document.getElementById('user-email-display').textContent = '👤 ' + user.email;
+    window._currentUserId = user.uid;
+    loadFromFirebase(user.uid);
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app-content').style.display = 'none';
+    window._currentUserId = null;
+  }
+});
+
+// LOAD DATA FROM FIREBASE
+async function loadFromFirebase(uid) {
+  try {
+    setSyncStatus('⏳ Loading...');
+    const docRef = doc(db, 'users', uid, 'data', 'hisab');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      var data = snap.data();
+      if (data.sal) {
+        DB.sal = data.sal || [];
+        DB.tr = data.tr || [];
+        DB.sam = data.sam || [];
+        DB.inv = data.inv || [];
+        DB.exp = data.exp || [];
+        DB.loan = data.loan || [];
+        saveDB();
+        syncYrs(); renderDash(); renderSal(); renderTr(); renderSam(); renderInv(); renderExp(); renderLoan(); renderLoanSummary(); renderLoanPersons();
+      }
+    }
+    // Profile
+    const profRef = doc(db, 'users', uid, 'data', 'profile');
+    const profSnap = await getDoc(profRef);
+    if (profSnap.exists()) {
+      var p = profSnap.data();
+      localStorage.setItem('amar_profile', JSON.stringify(p));
+      loadProfile();
+    }
+    setSyncStatus('✅ Synced');
+  } catch(e) {
+    setSyncStatus('⚠️ Offline');
+    console.error(e);
+  }
+}
+
+// SAVE DATA TO FIREBASE
+window.saveToFirebase = async function() {
+  var uid = window._currentUserId;
+  if (!uid) return;
+  try {
+    setSyncStatus('⏳ Saving...');
+    const docRef = doc(db, 'users', uid, 'data', 'hisab');
+    await setDoc(docRef, {
+      sal: DB.sal, tr: DB.tr, sam: DB.sam,
+      inv: DB.inv, exp: DB.exp, loan: DB.loan,
+      updatedAt: new Date().toISOString()
+    });
+    setSyncStatus('✅ Synced');
+  } catch(e) {
+    setSyncStatus('⚠️ Save failed');
+    console.error(e);
+  }
+};
+
+// SAVE PROFILE TO FIREBASE
+window.saveProfileToFirebase = async function(profile) {
+  var uid = window._currentUserId;
+  if (!uid) return;
+  try {
+    const profRef = doc(db, 'users', uid, 'data', 'profile');
+    await setDoc(profRef, profile);
+  } catch(e) { console.error(e); }
+};
+
+function setSyncStatus(msg) {
+  var el = document.getElementById('sync-status');
+  if (el) el.textContent = msg;
+}
+
+// AUTH FUNCTIONS (global)
+window.handleAuth = async function() {
+  var email = document.getElementById('auth-email').value.trim();
+  var pass = document.getElementById('auth-pass').value;
+  var pass2 = document.getElementById('auth-pass2').value;
+  var isReg = document.getElementById('tab-register').classList.contains('active');
+  var errEl = document.getElementById('auth-err');
+  var loadEl = document.getElementById('auth-loading');
+
+  errEl.style.display = 'none';
+  if (!email || !pass) { showAuthErr('Email ও Password দিন!'); return; }
+  if (isReg && pass !== pass2) { showAuthErr('Password দুটো মিলছে না!'); return; }
+  if (pass.length < 6) { showAuthErr('Password কমপক্ষে ৬ অক্ষর হতে হবে!'); return; }
+
+  loadEl.style.display = 'block';
+  try {
+    if (isReg) {
+      await createUserWithEmailAndPassword(auth, email, pass);
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  } catch(e) {
+    loadEl.style.display = 'none';
+    var msg = e.code === 'auth/user-not-found' ? 'এই email এ account নেই!' :
+              e.code === 'auth/wrong-password' ? 'Password ভুল!' :
+              e.code === 'auth/email-already-in-use' ? 'এই email ইতিমধ্যে registered!' :
+              e.code === 'auth/invalid-email' ? 'Valid email দিন!' :
+              e.code === 'auth/invalid-credential' ? 'Email বা Password ভুল!' :
+              'Error: ' + e.message;
+    showAuthErr(msg);
+  }
+};
+
+window.logoutUser = async function() {
+  if (confirm('Logout করবেন?')) {
+    await signOut(auth);
+  }
+};
+
+window.switchAuthTab = function(tab) {
+  var isReg = tab === 'register';
+  document.getElementById('tab-login').classList.toggle('active', !isReg);
+  document.getElementById('tab-register').classList.toggle('active', isReg);
+  document.getElementById('auth-pass2').style.display = isReg ? 'block' : 'none';
+  document.getElementById('auth-submit-btn').textContent = isReg ? '✅ Register' : '🔐 Login';
+  document.getElementById('auth-err').style.display = 'none';
+};
+
+function showAuthErr(msg) {
+  var el = document.getElementById('auth-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+</script>
+
 <script>
 var KEY='amar_hisab_v3', CATS_KEY='amar_hisab_cats';
 var DEFAULT_CATS=['Food','Transport','Rent','Medical','Shopping','Clothing','Entertainment','Education','Utilities','Other'];
@@ -657,7 +876,11 @@ window._cs={};
 function getCurSel(key,curs){var v=window._cs[key];return(v&&curs.indexOf(v)>-1)?v:(curs[0]||'');}
 
 function loadDB(){ try{var d=localStorage.getItem(KEY);return d?JSON.parse(d):{sal:[],tr:[],sam:[],inv:[],exp:[],loan:[]};}catch(e){return {sal:[],tr:[],sam:[],inv:[],exp:[],loan:[]};} }
-function saveDB(){ try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} }
+function saveDB(){
+  try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}
+  // Sync to Firebase
+  if(window.saveToFirebase) { clearTimeout(window._fbSaveTimer); window._fbSaveTimer=setTimeout(window.saveToFirebase,1500); }
+}
 function loadCats(){ try{var d=localStorage.getItem(CATS_KEY);return d?JSON.parse(d):[...DEFAULT_CATS];}catch(e){return [...DEFAULT_CATS];} }
 function saveCats(c){ try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catch(e){} }
 
@@ -1946,6 +2169,8 @@ function saveProfile(){
   var profile={name,job,dob,addr,phone,email,pic};
   localStorage.setItem('amar_profile',JSON.stringify(profile));
   updateProfileUI(profile);
+  // Sync to Firebase
+  if(window.saveProfileToFirebase) window.saveProfileToFirebase(profile);
   alert('✅ Profile saved!');
 }
 
