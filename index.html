@@ -133,15 +133,21 @@ input:checked+.slider:before{transform:translateX(20px);}
 .tab-banner-icon{font-size:22px;}
 .tab-banner-title{font-size:18px;font-weight:700;color:white;}
 .tab-banner-sub{font-size:11px;color:rgba(255,255,255,0.75);margin-top:2px;}
+.dark .rem-alert{background:#3d2e00!important;border-color:#f39c12!important;}
+.dark .rem-alert .rem-msg{color:#fcd97a!important;}
 
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div>
-    <h1 id="ttl">Amar Hisab</h1>
-    <span id="dt" style="font-size:11px;opacity:0.7;"></span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="topbar-avatar" onclick="showTab('set',document.querySelectorAll('.tab')[7])" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,0.35);flex-shrink:0;">👤</div>
+    <div>
+      <h1 id="ttl">Amar Hisab</h1>
+      <span id="topbar-name" style="font-size:10px;opacity:0.75;"></span>
+      <span id="dt" style="font-size:10px;opacity:0.6;display:block;"></span>
+    </div>
   </div>
   <div class="topbar-right">
     <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
@@ -166,6 +172,7 @@ input:checked+.slider:before{transform:translateX(20px);}
 
 <!-- DASHBOARD -->
 <div class="section active" id="s-dash">
+
   <!-- SLIDE SECTION — উপরে -->
   <div id="dash-slide-wrap" style="display:none;margin-bottom:12px;">
     <div class="slide-wrap">
@@ -325,11 +332,7 @@ input:checked+.slider:before{transform:translateX(20px);}
   <div class="card">
     <div class="card-title">➕ Add Expense</div>
     <div class="form-grid">
-      <div class="form-group"><label>Year</label><select id="exp-yr"></select></div>
-      <div class="form-group"><label>Month</label>
-        <select id="exp-mo"><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
-      </div>
-      <div class="form-group full"><label>Date</label><input type="date" id="exp-dt"></div>
+      <div class="form-group full"><label>Date</label><input type="date" id="exp-dt" onchange="autoFillExpYrMo()"></div>
       <div class="form-group">
         <label>Category</label>
         <select id="exp-cat" style="width:100%;"></select>
@@ -343,21 +346,13 @@ input:checked+.slider:before{transform:translateX(20px);}
     <button class="btn-save" onclick="addExp()">✅ Save</button>
   </div>
   <div class="card">
-    <div class="card-title">📊 Summary</div>
-    <div class="stats-grid" id="exp-stats"></div>
-  </div>
-  <div class="card">
     <div class="card-title">📋 History</div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderExp()">
     <div class="filter-row">
       <select id="exp-fyr" onchange="renderExp()"><option value="all">All Years</option></select>
       <select id="exp-fmo" onchange="renderExp()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
     </div>
-    <div style="margin-bottom:10px;">
-      <select id="exp-fcat" onchange="renderExp()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);">
-        
-      </select>
-    </div>
+    <select id="exp-fcat" onchange="renderExp()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);margin-bottom:10px;"><option value="">All Categories</option></select>
     <div class="tbl-wrap" id="exp-tbl"></div>
   </div>
 </div>
@@ -399,6 +394,8 @@ input:checked+.slider:before{transform:translateX(20px);}
     <div class="stats-grid" id="loan-stats"></div>
   </div>
 
+
+
   <div class="card">
     <div class="card-title">👤 Person-wise হিসাব</div>
     <div id="loan-persons"></div>
@@ -426,7 +423,62 @@ input:checked+.slider:before{transform:translateX(20px);}
 <div class="tab-banner" style="background:#1a3a5c;"><div class="tab-banner-icon">⚙️</div><div><div class="tab-banner-title">Settings</div><div class="tab-banner-sub">Customize your app</div></div></div>
   <div class="acc-list">
 
-    <!-- 2. Slide Cards -->
+    <!-- 1. Profile -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>👤 Profile</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+
+        <!-- Profile Card Preview -->
+        <div id="profile-card" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--navy),var(--teal));border-radius:14px;padding:16px;margin-bottom:16px;">
+          <div style="position:relative;flex-shrink:0;">
+            <div id="prof-avatar" style="width:70px;height:70px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;border:3px solid rgba(255,255,255,0.4);">👤</div>
+            <label for="prof-pic-input" style="position:absolute;bottom:0;right:0;background:var(--teal);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;border:2px solid white;">✏️</label>
+            <input type="file" id="prof-pic-input" accept="image/*" style="display:none;" onchange="uploadProfilePic(this)">
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div id="prof-name-display" style="font-size:16px;font-weight:700;color:#fff;">আপনার নাম</div>
+            <div id="prof-job-display" style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:2px;">পেশা</div>
+            <div id="prof-addr-display" style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:2px;">📍 ঠিকানা</div>
+          </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>পুরো নাম</label>
+            <input type="text" id="prof-name" placeholder="আপনার নাম লিখুন">
+          </div>
+          <div class="form-group">
+            <label>পেশা</label>
+            <input type="text" id="prof-job" placeholder="যেমন: Worker, Engineer">
+          </div>
+          <div class="form-group">
+            <label>জন্মতারিখ</label>
+            <input type="date" id="prof-dob">
+          </div>
+          <div class="form-group full">
+            <label>ঠিকানা</label>
+            <input type="text" id="prof-addr" placeholder="গ্রাম / শহর / জেলা">
+          </div>
+          <div class="form-group">
+            <label>ফোন নম্বর</label>
+            <input type="tel" id="prof-phone" placeholder="+880 1X XX XXX XXX">
+          </div>
+          <div class="form-group">
+            <label>ইমেইল</label>
+            <input type="email" id="prof-email" placeholder="example@email.com">
+          </div>
+          <div class="form-group full">
+            <button class="btn-green" onclick="saveProfile()">💾 Save Profile</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
         <span>🎞️ Dashboard Slide Cards</span><span class="acc-arrow">▶</span>
@@ -477,7 +529,42 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
     </div>
 
-    <!-- 5. Data Backup -->
+    <!-- 5. Reminders -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>🔔 Reminders</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">প্রতি মাসে যে তারিখে app খুলবেন, সেদিন Dashboard-এ alert দেখাবে।</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>📈 Salary</label>
+            <input type="number" id="rem-sal" min="1" max="31" placeholder="তারিখ (১-৩১)">
+          </div>
+          <div class="form-group">
+            <label>🤝 Samity</label>
+            <input type="number" id="rem-sam" min="1" max="31" placeholder="তারিখ (১-৩১)">
+          </div>
+          <div class="form-group">
+            <label>💸 Transfer</label>
+            <input type="number" id="rem-tr" min="1" max="31" placeholder="তারিখ (১-৩১)">
+          </div>
+          <div class="form-group">
+            <label>📈 Investment</label>
+            <input type="number" id="rem-inv" min="1" max="31" placeholder="তারিখ (১-৩১)">
+          </div>
+          <div class="form-group full">
+            <label>🤲 Loan</label>
+            <input type="number" id="rem-loan" min="1" max="31" placeholder="তারিখ (১-৩১)">
+          </div>
+          <div class="form-group full">
+            <button class="btn-green" onclick="saveReminders()">💾 Save Reminders</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Data Backup -->
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
         <span>💾 Data Backup</span><span class="acc-arrow">▶</span>
@@ -494,12 +581,52 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
     </div>
 
+    <!-- 7. About & Legal -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>📋 About & Legal</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+
+        <!-- About App -->
+        <div style="background:linear-gradient(135deg,var(--navy),var(--teal));border-radius:12px;padding:16px;margin-bottom:14px;text-align:center;">
+          <div style="font-size:36px;margin-bottom:6px;">💰</div>
+          <div style="font-size:18px;font-weight:700;color:#fff;">Amar Hisab</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;">Version 1.0</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Developed by Hafez MD Nazim Uddin</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;">Personal Finance Tracker</div>
+        </div>
+
+        <!-- Privacy Policy -->
+        <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">🔒 Privacy Policy</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+            <div style="margin-bottom:6px;">✅ <b>কোনো data collect করা হয় না।</b></div>
+            <div style="margin-bottom:6px;">✅ আপনার সব তথ্য শুধুমাত্র <b>আপনার device-এ</b> সংরক্ষিত থাকে।</div>
+            <div style="margin-bottom:6px;">✅ কোনো <b>third-party server</b> বা cloud-এ data পাঠানো হয় না।</div>
+            <div style="margin-bottom:6px;">✅ কোনো <b>advertisement</b> বা tracking নেই।</div>
+            <div style="margin-bottom:6px;">✅ Developer আপনার কোনো তথ্য <b>access করতে পারেন না।</b></div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;">Last updated: June 2026</div>
+          </div>
+        </div>
+
+        <!-- Terms of Use -->
+        <div style="background:var(--bg);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">📄 Terms of Use</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+            <div style="margin-bottom:6px;">📌 এই app শুধুমাত্র <b>personal use</b> এর জন্য।</div>
+            <div style="margin-bottom:6px;">📌 আপনার data সুরক্ষিত রাখার দায়িত্ব <b>আপনার নিজের।</b> নিয়মিত backup নিন।</div>
+            <div style="margin-bottom:6px;">📌 App ব্যবহারে কোনো data হারিয়ে গেলে <b>Developer দায়ী নন।</b></div>
+            <div style="margin-bottom:6px;">📌 এই app বাণিজ্যিকভাবে <b>বিক্রি বা বিতরণ করা যাবে না।</b></div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;">© 2026 Hafez MD Nazim Uddin. All rights reserved.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
-
-</div>
-
-<!-- EDIT MODAL -->
 <input type="checkbox" id="dark-toggle" onchange="toggleDark()" style="display:none;">
 <div id="del-confirm" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
   <div style="background:var(--card);border-radius:14px;padding:24px;max-width:280px;width:90%;margin:auto;margin-top:40vh;box-shadow:0 8px 32px rgba(0,0,0,0.2);text-align:center;">
@@ -537,6 +664,16 @@ function saveCats(c){ try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catc
 var DB=loadDB();
 if(!DB.loan) DB.loan=[];
 
+// INJECT BACKUP DATA
+(function(){
+  var backup={"sal":[{"year":"2026","month":"Feb","expected":1700,"received":1400,"currency":"SAR","date":"2026-03-13","notes":""},{"year":"2026","month":"Jan","expected":850,"received":1000,"currency":"SAR","date":"2026-02-16","notes":""},{"year":"2026","month":"Mar","expected":1700,"received":1400,"currency":"SAR","date":"2026-04-07","notes":""},{"year":"2026","month":"Apr","expected":1700,"received":1400,"currency":"SAR","date":"2026-05-03","notes":""},{"year":"2026","month":"May","expected":1700,"received":1500,"currency":"SAR","date":"2026-05-24","notes":""}],"tr":[{"year":"2022","month":"Dec","date":"2022-12-31","method":"bKash","currency":"BDT","amount":50750,"notes":""},{"year":"2023","month":"Feb","date":"2023-02-28","method":"bKash","currency":"BDT","amount":33500,"notes":""},{"year":"2023","month":"Mar","date":"2026-06-12","method":"bKash","currency":"BDT","amount":29435,"notes":""},{"year":"2023","month":"Apr","date":"2026-06-12","method":"Nagad","currency":"BDT","amount":32480,"notes":""},{"year":"2023","month":"May","date":"2023-05-31","method":"Nagad","currency":"BDT","amount":12180,"notes":""},{"year":"2023","month":"Jun","date":"2023-06-30","method":"Nagad","currency":"BDT","amount":27000,"notes":""},{"year":"2023","month":"Aug","date":"2023-06-30","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2023","month":"Sep","date":"2023-09-30","method":"Nagad","currency":"BDT","amount":21000,"notes":""},{"year":"2023","month":"Oct","date":"2023-10-31","method":"Nagad","currency":"BDT","amount":13000,"notes":""},{"year":"2023","month":"Nov","date":"2023-11-30","method":"Nagad","currency":"BDT","amount":20000,"notes":""},{"year":"2023","month":"Dec","date":"2023-12-31","method":"Nagad","currency":"BDT","amount":32000,"notes":""},{"year":"2024","month":"Jan","date":"2024-01-31","method":"Nagad","currency":"BDT","amount":25000,"notes":""},{"year":"2024","month":"Feb","date":"2024-02-29","method":"Nagad","currency":"BDT","amount":32000,"notes":""},{"year":"2024","month":"Mar","date":"2024-03-31","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2024","month":"Apr","date":"2024-04-30","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2024","month":"May","date":"2024-05-30","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2024","month":"Jun","date":"2024-06-30","method":"Nagad","currency":"BDT","amount":85000,"notes":""},{"year":"2024","month":"Jul","date":"2024-07-30","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2024","month":"Aug","date":"2024-08-30","method":"Nagad","currency":"BDT","amount":32000,"notes":""},{"year":"2024","month":"Sep","date":"2024-09-30","method":"Nagad","currency":"BDT","amount":30000,"notes":""},{"year":"2024","month":"Oct","date":"2024-10-30","method":"Nagad","currency":"BDT","amount":32000,"notes":""},{"year":"2024","month":"Nov","date":"2024-11-30","method":"Nagad","currency":"BDT","amount":70000,"notes":""},{"year":"2025","month":"Jan","date":"2025-01-30","method":"Nagad","currency":"BDT","amount":40600,"notes":""},{"year":"2025","month":"Feb","date":"2025-02-28","method":"Nagad","currency":"BDT","amount":35000,"notes":""},{"year":"2025","month":"Apr","date":"2025-04-30","method":"Nagad","currency":"BDT","amount":50000,"notes":""},{"year":"2025","month":"May","date":"2025-05-30","method":"Nagad","currency":"BDT","amount":40600,"notes":""},{"year":"2025","month":"Jun","date":"2025-06-30","method":"Nagad","currency":"BDT","amount":40600,"notes":""},{"year":"2026","month":"Feb","date":"2026-02-28","method":"Nagad","currency":"BDT","amount":30450,"notes":""},{"year":"2026","month":"Mar","date":"2026-03-31","method":"Nagad","currency":"BDT","amount":15225,"notes":""},{"year":"2026","month":"May","date":"2026-05-31","method":"Nagad","currency":"BDT","amount":29435,"notes":""}],"sam":[{"year":"2025","month":"Nov","currency":"BDT","amount":5000,"date":"2025-11-25"},{"year":"2025","month":"Dec","currency":"BDT","amount":5000,"date":"2025-12-25"},{"year":"2026","month":"Jan","currency":"BDT","amount":5000,"date":"2026-01-25"},{"year":"2026","month":"Feb","currency":"BDT","amount":5000,"date":"2026-02-25"},{"year":"2026","month":"Mar","currency":"BDT","amount":5000,"date":"2026-03-25"},{"year":"2026","month":"Apr","currency":"BDT","amount":5000,"date":"2026-04-25"},{"year":"2026","month":"May","currency":"BDT","amount":5000,"date":"2026-05-25"}],"inv":[{"year":"2025","month":"Jul","currency":"BDT","amount":4000,"date":"2026-06-10","notes":""},{"year":"2025","month":"Aug","currency":"BDT","amount":4000,"date":"2026-08-10","notes":""},{"year":"2025","month":"Sep","currency":"BDT","amount":4000,"date":"2026-09-10","notes":""},{"year":"2025","month":"Oct","currency":"BDT","amount":4000,"date":"2026-10-10","notes":""},{"year":"2025","month":"Nov","currency":"BDT","amount":4000,"date":"2026-11-10","notes":""},{"year":"2025","month":"Dec","currency":"BDT","amount":4000,"date":"2026-12-10","notes":""},{"year":"2026","month":"Jan","currency":"BDT","amount":4000,"date":"2026-01-10","notes":""},{"year":"2026","month":"Feb","currency":"BDT","amount":4000,"date":"2026-02-10","notes":""},{"year":"2026","month":"Mar","currency":"BDT","amount":4000,"date":"2026-03-10","notes":""},{"year":"2026","month":"Apr","currency":"BDT","amount":4000,"date":"2026-04-10","notes":""},{"year":"2026","month":"May","currency":"BDT","amount":4000,"date":"2026-05-10","notes":""},{"year":"2026","month":"Jun","currency":"BDT","amount":4000,"date":"2026-06-10","notes":""}],"exp":[{"year":"2026","month":"Jun","date":"2026-06-05","category":"Bazar","currency":"SAR","amount":81,"notes":""},{"year":"2026","month":"Jun","date":"2026-06-12","category":"Bazar","currency":"SAR","amount":51,"notes":""},{"year":"2026","month":"Jun","date":"2026-06-13","category":"water","currency":"SAR","amount":2,"notes":""},{"year":"2026","month":"Jun","date":"2026-06-18","category":"Food","currency":"SAR","amount":16,"notes":""},{"year":"2026","month":"Jun","date":"2026-06-18","category":"Bazar","currency":"SAR","amount":58,"notes":""}],"loan":[{"type":"owe","person":"Miftah","currency":"BDT","amount":50,"paid":0,"date":"2026-06-13","notes":""},{"type":"owe","person":"Sajid","currency":"SAR","amount":30,"paid":0,"date":"2026-06-13","notes":""},{"type":"owe","person":"Ayub vhai","currency":"SAR","amount":30,"paid":0,"date":"2026-06-12","notes":""},{"type":"owe","person":"Ahmad Sabir","currency":"SAR","amount":100,"paid":0,"date":"2026-06-17","notes":""},{"type":"owe","person":"Miftah","currency":"BDT","amount":200,"paid":0,"date":"2026-06-18","notes":""}]};
+  // Only inject if localStorage is empty
+  var existing=localStorage.getItem(KEY);
+  if(!existing||JSON.parse(existing).sal&&JSON.parse(existing).sal.length===0){
+    DB=backup; saveDB();
+  }
+})();
+
 var YEARS=[]; for(var y=2001;y<=2100;y++) YEARS.push(''+y);
 var MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -545,7 +682,7 @@ function getYrVal(id){
   return el?el.value:'';
 }
 function fillYears(){
-  var ids=['sal-yr','tr-yr','sam-yr','inv-yr','exp-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'];
+  var ids=['sal-yr','tr-yr','sam-yr','inv-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'];
   ids.forEach(function(id){
     var el=document.getElementById(id); if(!el)return;
     var cur=el.value;
@@ -553,10 +690,10 @@ function fillYears(){
     if(cur) el.value=cur;
   });
   var cy=''+new Date().getFullYear();
-  ['sal-yr','tr-yr','sam-yr','inv-yr','exp-yr'].forEach(function(id){ var el=document.getElementById(id); if(el&&!el.value) el.value=cy; });
+  ['sal-yr','tr-yr','sam-yr','inv-yr'].forEach(function(id){ var el=document.getElementById(id); if(el&&!el.value) el.value=cy; });
   if(window._yrObservers) Object.values(window._yrObservers).forEach(function(fn){fn();});
   // Also update btn text for form year selects after default year set
-  ['sal-yr','tr-yr','sam-yr','inv-yr','exp-yr'].forEach(function(id){
+  ['sal-yr','tr-yr','sam-yr','inv-yr'].forEach(function(id){
     var el=document.getElementById(id);
     if(!el)return;
     var wrap=el.parentNode;
@@ -575,7 +712,7 @@ function fillCats(){
   if(cur&&el.querySelector('option[value="'+cur+'"]')) el.value=cur;
   // Filter dropdown: exactly same as settings categories
   var fel=document.getElementById('exp-fcat'); if(fel){
-    var fcur=fel.value; fel.innerHTML='';
+    var fcur=fel.value; fel.innerHTML='<option value="">All Categories</option>';
     cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;fel.appendChild(o);});
     if(fcur&&fel.querySelector('option[value="'+fcur+'"]')) fel.value=fcur;
   }
@@ -586,7 +723,7 @@ function renderCatChips(){
   var el=document.getElementById('cat-chips'); if(!el)return;
   var cats=loadCats();
   el.innerHTML=cats.map(function(c,i){
-    return '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;margin:3px;">'+c+'<button onclick="delCat('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;">×</button></span>';
+    return '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;margin:3px;">'+c+'<button onclick="delCat('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;">x</button></span>';
   }).join('');
 }
 
@@ -608,9 +745,29 @@ function addExpCatSet(){
 
 function today(){ return new Date().toISOString().split('T')[0]; }
 function setDefaults(){
-  ['sal-dt','tr-dt','sam-dt','inv-dt','exp-dt','loan-dt'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=today();});
-  var cm=MOS[new Date().getMonth()];
-  ['sal-mo','tr-mo','sam-mo','inv-mo','exp-mo'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=cm;});
+  var now=new Date();
+  var cy=''+now.getFullYear();
+  var cm=MOS[now.getMonth()];
+  var cd=today();
+  // Date fields
+  ['sal-dt','tr-dt','sam-dt','inv-dt','exp-dt','loan-dt'].forEach(function(id){
+    var el=document.getElementById(id);if(el&&!el.value)el.value=cd;
+  });
+  // Month fields
+  ['sal-mo','tr-mo','sam-mo','inv-mo'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value=cm;
+  });
+  // Year fields — set current year and update button text if custom dropdown
+  ['sal-yr','tr-yr','sam-yr','inv-yr'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    if(!el.value) el.value=cy;
+    // update custom yr-btn text if exists
+    var wrap=el.closest?el.closest('.yr-wrap'):el.parentNode;
+    if(wrap){
+      var btn=wrap.querySelector('.yr-btn');
+      if(btn&&el.options[el.selectedIndex]) btn.textContent=el.options[el.selectedIndex].text;
+    }
+  });
 }
 
 function N(n){ return Number(n).toLocaleString('en'); }
@@ -670,7 +827,8 @@ function setLoanTab(t){
   LOAN_TYPE=t;
   document.getElementById('loan-tab-owe').classList.toggle('active',t==='owe');
   document.getElementById('loan-tab-lend').classList.toggle('active',t==='lend');
-  document.getElementById('loan-person-lbl').textContent=t==='owe'?'কার কাছ থেকে নিলাম':'কাকে দিলাম';
+  var lbl=document.getElementById('loan-person-lbl');
+  if(lbl) lbl.textContent=t==='owe'?'কার কাছ থেকে নিলাম':'কাকে দিলাম';
 }
 
 // ADD
@@ -715,14 +873,24 @@ function addInv(){
   alert('✅ Saved!');
 }
 
+var MOS_ARR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function autoFillExpYrMo(){ /* no-op, kept for compatibility */ }
+
 function addExp(){
-  var yr=document.getElementById('exp-yr').value, mo=document.getElementById('exp-mo').value;
-  var dt=document.getElementById('exp-dt').value, cat=document.getElementById('exp-cat').value;
-  var cur=document.getElementById('exp-cur').value, amt=parseFloat(document.getElementById('exp-amt').value)||0, nt=document.getElementById('exp-nt').value;
+  var dt=document.getElementById('exp-dt').value;
+  if(!dt){alert('Date দিন!');return;}
+  var d=new Date(dt);
+  var yr=String(d.getFullYear());
+  var mo=MOS_ARR[d.getMonth()];
+  var cat=document.getElementById('exp-cat').value;
+  var cur=document.getElementById('exp-cur').value;
+  var amt=parseFloat(document.getElementById('exp-amt').value)||0;
+  var nt=document.getElementById('exp-nt').value;
   if(!amt){alert('Amount লিখুন!');return;}
   DB.exp.push({year:yr,month:mo,date:dt,category:cat,currency:cur,amount:amt,notes:nt});
   saveDB();syncYrs();renderExp();
-  document.getElementById('exp-amt').value='';document.getElementById('exp-nt').value='';
+  document.getElementById('exp-amt').value='';
+  document.getElementById('exp-nt').value='';
   alert('✅ Saved!');
 }
 
@@ -909,7 +1077,7 @@ function renderSal(search){
   data.forEach(function(r){
     var diff=r.received-r.expected; tE+=r.expected; tR+=r.received;
     var oi=DB.sal.indexOf(r);
-    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(diff>=0?'pos':'neg')+'">'+(diff>=0?'+':'')+N(diff)+'</td><td>'+r.currency+'</td><td>'+(r.date||'—')+'</td>'
+    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(diff>=0?'pos':'neg')+'">'+(diff>=0?'+':'')+N(diff)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'sal\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'sal\','+oi+')">🗑</button></td></tr>';
   });
   var td=tR-tE;
@@ -948,7 +1116,7 @@ function renderTr(search){
   var tot=0;
   data.forEach(function(r){
     tot+=r.amount; var oi=DB.tr.indexOf(r);
-    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+(r.date||'—')+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td>'
+    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+(r.date||'-')+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'tr\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'tr\','+oi+')">🗑</button></td></tr>';
   });
   var trTotLabel=trCurSelEl?'Total ('+trCurSelEl+')':'Total';
@@ -982,7 +1150,7 @@ function renderSam(){
   var tot=0;
   data.forEach(function(r){
     tot+=r.amount; var oi=DB.sam.indexOf(r);
-    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'—')+'</td>'
+    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'sam\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'sam\','+oi+')">🗑</button></td></tr>';
   });
   var totLabel=samCursSel?'Total ('+samCursSel+')':'Total';
@@ -1045,7 +1213,8 @@ function renderExp(){
   var topCats2=Object.keys(byCat2).sort(function(a,b){return byCat2[b]-byCat2[a];}).slice(0,3);
   var topHtml2=topCats2.map(function(c){return '<span style="font-size:10px;background:var(--bg);padding:2px 7px;border-radius:10px;margin:2px;display:inline-block;">'+c+': '+N(byCat2[c])+'</span>';}).join('');
   if(expCurs.length>0){
-    document.getElementById('exp-stats').innerHTML=
+    var expStatsEl=document.getElementById('exp-stats');
+    if(expStatsEl) expStatsEl.innerHTML=
       '<div class="stat-box red" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +'<div class="stat-label" style="margin:0;">💳 Total Expense</div>'
@@ -1055,7 +1224,8 @@ function renderExp(){
       +'<div style="margin-top:6px;">'+topHtml2+'</div>'
       +'</div>';
   } else {
-    document.getElementById('exp-stats').innerHTML=
+    var expStatsEl=document.getElementById('exp-stats');
+    if(expStatsEl) expStatsEl.innerHTML=
       '<div class="stat-box red"><div class="stat-label">Total Expense</div><div class="stat-value">0</div></div>'
       +'<div class="stat-box orange"><div class="stat-label">Transactions</div><div class="stat-value">0</div></div>';
   }
@@ -1064,7 +1234,7 @@ function renderExp(){
   var tot=0;
   data.forEach(function(r){
     tot+=r.amount; var oi=DB.exp.indexOf(r);
-    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.category+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'—')+'</td>'
+    h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.category+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'exp\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'exp\','+oi+')">🗑</button></td></tr>';
   });
   h+='</tbody><tfoot><tr class="total-row"><td colspan="3">Total</td><td>'+N(tot)+'</td><td colspan="3"></td></tr></tfoot></table>';
@@ -1094,7 +1264,7 @@ function renderLoan(search){
     var oi=DB.loan.indexOf(r);
     var badge=r.type==='owe'?'<span class="badge-owe">Owe</span>':'<span class="badge-lend">Lend</span>';
     h+='<tr><td>'+badge+'</td><td>'+r.person+'</td><td>'+N(r.amount)+'</td><td>'+N(r.paid||0)+'</td>'
-      +'<td class="'+(rem>0?'neg':'pos')+'">'+N(rem)+'</td><td>'+r.currency+'</td><td>'+(r.date||'—')+'</td>'
+      +'<td class="'+(rem>0?'neg':'pos')+'">'+N(rem)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'loan\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'loan\','+oi+')">🗑</button></td></tr>';
   });
   h+='</tbody></table>';
@@ -1174,7 +1344,7 @@ function renderLoanPersons(){
           var rem=e.r.amount-(e.r.paid||0);
           html+='<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:6px;margin-bottom:3px;font-size:12px;">';
           html+='<div><div>মূল: <b>'+N(e.r.amount)+'</b> | পরিশোধ: <b>'+N(e.r.paid||0)+'</b></div>';
-          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' — '+e.r.notes:'')+'</div>';
+          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' - '+e.r.notes:'')+'</div>';
           html+='</div>';
           html+='<div style="text-align:right;min-width:60px;"><div class="'+(rem>0?'neg':'pos')+'" style="font-size:13px;">'+N(rem)+'</div><div style="font-size:10px;color:var(--muted);">'+(rem>0?'বাকি':'শেষ')+'</div></div>';
           html+='</div>';
@@ -1186,7 +1356,7 @@ function renderLoanPersons(){
           var rem=e.r.amount-(e.r.paid||0);
           html+='<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:6px;margin-bottom:3px;font-size:12px;">';
           html+='<div><div>মূল: <b>'+N(e.r.amount)+'</b> | পেয়েছি: <b>'+N(e.r.paid||0)+'</b></div>';
-          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' — '+e.r.notes:'')+'</div>';
+          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' - '+e.r.notes:'')+'</div>';
           html+='</div>';
           html+='<div style="text-align:right;min-width:60px;"><div style="font-size:13px;color:var(--green);font-weight:600;">'+N(rem)+'</div><div style="font-size:10px;color:var(--muted);">'+(rem>0?'পাওয়া বাকি':'শেষ')+'</div></div>';
           html+='</div>';
@@ -1358,7 +1528,7 @@ function renderDash(){
   }
 
   document.getElementById('d-stats').innerHTML=stats;
-  document.getElementById('d-alerts').innerHTML='';
+  checkReminders();
   renderSlides();
 }
 
@@ -1503,7 +1673,7 @@ function renderSlides(){
     var lCurs=[...new Set(loanD.map(function(r){return r.currency;}))];
     var html5='<div class="slide-label">💰 Loan</div><div class="stats-grid" style="margin:0;">';
     if(lCurs.length===0){
-      html5+='<div class="stat-box orange"><div class="stat-label">No loan data</div><div class="stat-value">—</div></div>';
+      html5+='<div class="stat-box orange"><div class="stat-label">No loan data</div><div class="stat-value">-</div></div>';
     } else {
       lCurs.forEach(function(c){
         var owed=loanD.filter(function(r){return r.type==='owe'&&r.currency===c;}).reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
@@ -1591,11 +1761,35 @@ function setLang(l,btn){
   btn.classList.add('active');
   document.documentElement.dir=l==='ar'?'rtl':'ltr';
   var t=LANG[l];
-  document.getElementById('ttl').textContent=t.ttl;
+  var g=function(id){return document.getElementById(id);};
+  var set=function(id,val){var el=g(id);if(el)el.textContent=val;};
+
+  // Title
+  set('ttl', t.ttl);
+
+  // Tabs — safe, only update if exists
   var tabs=document.querySelectorAll('.tab');
-  tabs[0].textContent=t.dash; tabs[1].textContent=t.sal; tabs[2].textContent=t.tr;
-  tabs[3].textContent=t.sam; tabs[4].textContent=t.inv; tabs[5].textContent=t.exp;
-  tabs[6].textContent=t.loan; tabs[7].textContent=t.set;
+  var tabKeys=['dash','sal','tr','sam','inv','exp','loan','set'];
+  tabKeys.forEach(function(k,i){
+    if(tabs[i]) tabs[i].textContent=t[k]||tabs[i].textContent;
+  });
+
+  // Tab banners
+  var banners=document.querySelectorAll('.tab-banner-title');
+  var bannerSubs=document.querySelectorAll('.tab-banner-sub');
+  var BANNERS={
+    en:['Dashboard','Salary','Transfer','Samity','Investment','Expense','Loan','Settings'],
+    bn:['ড্যাশবোর্ড','বেতন','ট্রান্সফার','সমিতি','বিনিয়োগ','খরচ','দেনা পাওনা','সেটিংস'],
+    ar:['لوحة','راتب','تحويل','جمعية','استثمار','مصروف','قروض','إعدادات']
+  };
+  var SUBS={
+    en:['Overview','Expected vs Received tracking','Money transfer history','Monthly samity payments','Investment tracking','Daily expense tracker','দেনা ও পাওনার হিসাব','Customize your app'],
+    bn:['সারসংক্ষেপ','প্রত্যাশিত বনাম প্রাপ্ত','মানি ট্রান্সফার হিস্ট্রি','মাসিক সমিতি পেমেন্ট','বিনিয়োগ ট্র্যাকিং','দৈনিক খরচ ট্র্যাকার','দেনা ও পাওনার হিসাব','অ্যাপ কাস্টমাইজ'],
+    ar:['نظرة عامة','تتبع الراتب','تاريخ التحويل','مدفوعات شهرية','تتبع الاستثمار','تتبع المصروف','سجل الديون','تخصيص التطبيق']
+  };
+  if(BANNERS[l]) banners.forEach(function(el,i){if(BANNERS[l][i])el.textContent=BANNERS[l][i];});
+  if(SUBS[l]) bannerSubs.forEach(function(el,i){if(SUBS[l][i])el.textContent=SUBS[l][i];});
+
   renderDash();
 }
 
@@ -1603,7 +1797,7 @@ function setLang(l,btn){
 function dlPDF(){
   var yr=document.getElementById('pdf-yr').value, mo=document.getElementById('pdf-mo').value, sec=document.getElementById('pdf-sec').value;
   function f(arr){return arr.filter(function(r){return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo);});}
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;color:#1a1a2e;}h1{color:#1a3a5c;border-bottom:3px solid #f39c12;padding-bottom:8px;}h2{color:#048a81;margin:20px 0 8px;font-size:14px;}table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}th{background:#1a3a5c;color:white;padding:7px;text-align:left;}td{padding:6px 7px;border-bottom:1px solid #e2e8f0;}tr:nth-child(even) td{background:#f8fafc;}.tot td{background:#1a3a5c!important;color:white!important;font-weight:700;}.pos{color:#1e8449;font-weight:600;}.neg{color:#c0392b;font-weight:600;}</style></head><body><h1>Amar Hisab — Report</h1><p style="font-size:11px;color:#666;">Year: '+(yr==='all'?'All':yr)+' | Month: '+(mo==='all'?'All':mo)+' | '+new Date().toLocaleDateString()+'</p>';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;color:#1a1a2e;}h1{color:#1a3a5c;border-bottom:3px solid #f39c12;padding-bottom:8px;}h2{color:#048a81;margin:20px 0 8px;font-size:14px;}table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}th{background:#1a3a5c;color:white;padding:7px;text-align:left;}td{padding:6px 7px;border-bottom:1px solid #e2e8f0;}tr:nth-child(even) td{background:#f8fafc;}.tot td{background:#1a3a5c!important;color:white!important;font-weight:700;}.pos{color:#1e8449;font-weight:600;}.neg{color:#c0392b;font-weight:600;}</style></head><body><h1>Amar Hisab - Report</h1><p style="font-size:11px;color:#666;">Year: '+(yr==='all'?'All':yr)+' | Month: '+(mo==='all'?'All':mo)+' | '+new Date().toLocaleDateString()+'</p>';
   if(sec==='all'||sec==='sal'){var d=f(DB.sal);if(d.length){var tE=0,tR=0;html+='<h2>Salary</h2><table><tr><th>Year</th><th>Month</th><th>Expected</th><th>Received</th><th>Diff</th><th>Cur</th></tr>';d.forEach(function(r){var df=r.received-r.expected;tE+=r.expected;tR+=r.received;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(df>=0?'pos':'neg')+'">'+(df>=0?'+':'')+N(df)+'</td><td>'+r.currency+'</td></tr>';});var td=tR-tE;html+='<tr class="tot"><td colspan="2">Total</td><td>'+N(tE)+'</td><td>'+N(tR)+'</td><td>'+(td>=0?'+':'')+N(td)+'</td><td></td></tr></table>';}}
   if(sec==='all'||sec==='tr'){var d2=f(DB.tr);var t2=0;if(d2.length){html+='<h2>Transfer</h2><table><tr><th>Year</th><th>Month</th><th>Method</th><th>Amount</th><th>Cur</th></tr>';d2.forEach(function(r){t2+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="3">Total</td><td>'+N(t2)+'</td><td></td></tr></table>';}}
   if(sec==='all'||sec==='sam'){var d3=f(DB.sam);var t3=0;if(d3.length){html+='<h2>Samity</h2><table><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th></tr>';d3.forEach(function(r){t3+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="2">Total</td><td>'+N(t3)+'</td><td></td></tr></table>';}}
@@ -1641,14 +1835,181 @@ function importBk(input){
 function toggleAcc(head){
   var item=head.parentNode;
   var wasOpen=item.classList.contains('open');
-  // close all
   document.querySelectorAll('.acc-item.open').forEach(function(i){i.classList.remove('open');});
-  if(!wasOpen) item.classList.add('open');
+  if(!wasOpen){
+    item.classList.add('open');
+    // reload data into forms when opened
+    var title=head.querySelector('span:first-child').textContent;
+    if(title.indexOf('Reminder')>-1) loadReminders();
+    if(title.indexOf('Profile')>-1) loadProfile();
+  }
 }
 
-// INIT
+// ============ REMINDERS ============
+function saveReminders(){
+  var rem={
+    sal: parseInt(document.getElementById('rem-sal').value)||0,
+    sam: parseInt(document.getElementById('rem-sam').value)||0,
+    tr:  parseInt(document.getElementById('rem-tr').value)||0,
+    inv: parseInt(document.getElementById('rem-inv').value)||0,
+    loan:parseInt(document.getElementById('rem-loan').value)||0
+  };
+  localStorage.setItem('amar_reminders', JSON.stringify(rem));
+  alert('✅ Reminders saved!');
+  checkReminders();
+}
+
+function loadReminders(){
+  var raw=localStorage.getItem('amar_reminders');
+  if(!raw) return;
+  var rem=JSON.parse(raw);
+  var g=function(id){return document.getElementById(id);};
+  if(rem.sal && g('rem-sal')) g('rem-sal').value=rem.sal;
+  if(rem.sam && g('rem-sam')) g('rem-sam').value=rem.sam;
+  if(rem.tr  && g('rem-tr'))  g('rem-tr').value=rem.tr;
+  if(rem.inv && g('rem-inv')) g('rem-inv').value=rem.inv;
+  if(rem.loan&& g('rem-loan'))g('rem-loan').value=rem.loan;
+}
+
+function dismissAlert(key){
+  var mo=new Date().toLocaleString('en',{month:'short'});
+  var yr=new Date().getFullYear().toString();
+  var dismissed=JSON.parse(localStorage.getItem('amar_dismissed')||'{}');
+  dismissed[key+'_'+yr+'_'+mo]=true;
+  localStorage.setItem('amar_dismissed',JSON.stringify(dismissed));
+  checkReminders();
+}
+
+function checkReminders(){
+  var raw=localStorage.getItem('amar_reminders');
+  if(!raw) return;
+  var rem=JSON.parse(raw);
+  var today=new Date();
+  var day=today.getDate();
+  var mo=today.toLocaleString('en',{month:'short'});
+  var yr=today.getFullYear().toString();
+  var dismissed=JSON.parse(localStorage.getItem('amar_dismissed')||'{}');
+
+  var alerts=[];
+
+  if(rem.sal && day===rem.sal && !dismissed['sal_'+yr+'_'+mo]){
+    var hasSal=DB.sal.some(function(r){return r.year===yr&&r.month===mo;});
+    if(!hasSal) alerts.push({key:'sal', icon:'📈', msg:'এই মাসে Salary entry নেই!', tab:'sal'});
+  }
+  if(rem.sam && day===rem.sam && !dismissed['sam_'+yr+'_'+mo]){
+    var hasSam=DB.sam.some(function(r){return r.year===yr&&r.month===mo;});
+    if(!hasSam) alerts.push({key:'sam', icon:'🤝', msg:'এই মাসে Samity payment নেই!', tab:'sam'});
+  }
+  if(rem.tr && day===rem.tr && !dismissed['tr_'+yr+'_'+mo]){
+    var hasTr=DB.tr.some(function(r){return r.year===yr&&r.month===mo;});
+    if(!hasTr) alerts.push({key:'tr', icon:'💸', msg:'এই মাসে Transfer entry নেই!', tab:'tr'});
+  }
+  if(rem.inv && day===rem.inv && !dismissed['inv_'+yr+'_'+mo]){
+    var hasInv=DB.inv.some(function(r){return r.year===yr&&r.month===mo;});
+    if(!hasInv) alerts.push({key:'inv', icon:'📈', msg:'এই মাসে Investment entry নেই!', tab:'inv'});
+  }
+  if(rem.loan && day===rem.loan && !dismissed['loan_'+yr+'_'+mo]){
+    var hasLoan=DB.loan.length>0;
+    if(!hasLoan) alerts.push({key:'loan', icon:'🤲', msg:'কোনো Loan record নেই!', tab:'loan'});
+  }
+
+  var el=document.getElementById('d-alerts');
+  if(!el) return;
+  if(!alerts.length){el.innerHTML='';return;}
+
+  var html='<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">';
+  alerts.forEach(function(a){
+    html+='<div style="background:#fff3cd;border:1.5px solid #f39c12;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">'
+      +'<span style="font-size:20px;">'+a.icon+'</span>'
+      +'<span style="font-size:13px;font-weight:600;color:#7d4e00;">'+a.msg+'</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-shrink:0;">'
+      +'<button onclick="showTabByBtn(\''+a.tab+'\')" style="background:#f39c12;color:white;border:none;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">➕ Add</button>'
+      +'<button onclick="dismissAlert(\''+a.key+'\')" style="background:none;border:1.5px solid #f39c12;color:#7d4e00;border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer;font-family:inherit;" title="এই মাসে আর দেখাবে না">✕</button>'
+      +'</div>'
+      +'</div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+
+function saveProfile(){
+  var name=document.getElementById('prof-name').value.trim();
+  var job=document.getElementById('prof-job').value.trim();
+  var dob=document.getElementById('prof-dob').value;
+  var addr=document.getElementById('prof-addr').value.trim();
+  var phone=document.getElementById('prof-phone').value.trim();
+  var email=document.getElementById('prof-email').value.trim();
+  var pic=localStorage.getItem('prof_pic')||'';
+  var profile={name,job,dob,addr,phone,email,pic};
+  localStorage.setItem('amar_profile',JSON.stringify(profile));
+  updateProfileUI(profile);
+  alert('✅ Profile saved!');
+}
+
+function uploadProfilePic(input){
+  var file=input.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    localStorage.setItem('prof_pic',e.target.result);
+    var g=function(id){return document.getElementById(id);};
+    var imgHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;">';
+    if(g('prof-avatar')) g('prof-avatar').innerHTML=imgHTML;
+    if(g('topbar-avatar')) g('topbar-avatar').innerHTML=imgHTML;
+    if(g('dash-prof-pic')) g('dash-prof-pic').innerHTML=imgHTML;
+    var p=JSON.parse(localStorage.getItem('amar_profile')||'{}');
+    p.pic=e.target.result;
+    localStorage.setItem('amar_profile',JSON.stringify(p));
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateProfileUI(p){
+  if(!p) return;
+  var g=function(id){return document.getElementById(id);};
+  var set=function(id,val){var el=g(id);if(el&&val!==undefined)el.textContent=val;};
+  var avatarHTML=p.pic?'<img src="'+p.pic+'" style="width:100%;height:100%;object-fit:cover;">':'👤';
+
+  // Settings preview card
+  set('prof-name-display', p.name||'আপনার নাম');
+  set('prof-job-display', p.job||'পেশা');
+  set('prof-addr-display', p.addr?'📍 '+p.addr:'📍 ঠিকানা');
+  if(g('prof-avatar')) g('prof-avatar').innerHTML=avatarHTML;
+
+  // Topbar
+  set('topbar-name', p.name||'');
+  if(g('topbar-avatar')) g('topbar-avatar').innerHTML=avatarHTML;
+}
+
+function loadProfile(){
+  var raw=localStorage.getItem('amar_profile');
+  if(!raw) return;
+  var p=JSON.parse(raw);
+  if(p.name) document.getElementById('prof-name').value=p.name;
+  if(p.job) document.getElementById('prof-job').value=p.job;
+  if(p.dob) document.getElementById('prof-dob').value=p.dob;
+  if(p.addr) document.getElementById('prof-addr').value=p.addr;
+  if(p.phone) document.getElementById('prof-phone').value=p.phone;
+  if(p.email) document.getElementById('prof-email').value=p.email;
+  updateProfileUI(p);
+}
+
 document.getElementById('dt').textContent=new Date().toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'});
-fillYears(); initYrSearchable();setDefaults();fillCats();syncYrs();renderDash();applySlideOpts();
+fillYears(); initYrSearchable(); setDefaults(); fillCats(); syncYrs(); renderDash(); applySlideOpts(); loadProfile(); loadReminders(); checkReminders();
+// Extra sync after DOM settles to fix yr-btn showing 2001
+setTimeout(function(){
+  var cy=''+new Date().getFullYear();
+  ['sal-yr','tr-yr','sam-yr','inv-yr'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.value=cy;
+    var wrap=el.closest?el.closest('.yr-wrap'):el.parentNode;
+    if(!wrap)return;
+    var btn=wrap.querySelector('.yr-btn');
+    if(btn&&el.options[el.selectedIndex]) btn.textContent=el.options[el.selectedIndex].text;
+  });
+},300);
 try{if(localStorage.getItem('amar_dark')==='1'){document.body.classList.add('dark');document.getElementById('dark-toggle').checked=true;var b=document.getElementById('dark-topbar-btn');if(b)b.textContent='☀️';}}catch(e){}
 
 // Searchable Year Dropdown
@@ -1718,10 +2079,10 @@ function makeYrSearchable(selectId){
 }
 
 function initYrSearchable(){
-  ['sal-yr','tr-yr','sam-yr','inv-yr','exp-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'].forEach(makeYrSearchable);
+  ['sal-yr','tr-yr','sam-yr','inv-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'].forEach(makeYrSearchable);
   // Sync btn text after all options loaded
   setTimeout(function(){
-    ['sal-yr','tr-yr','sam-yr','inv-yr','exp-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'].forEach(function(id){
+    ['sal-yr','tr-yr','sam-yr','inv-yr','sal-fyr','tr-fyr','sam-fyr','inv-fyr','exp-fyr','d-yr','pdf-yr'].forEach(function(id){
       var el=document.getElementById(id); if(!el)return;
       var wrap=el.parentNode; if(!wrap||!wrap.classList.contains('yr-wrap'))return;
       var btn=wrap.querySelector('.yr-btn');
@@ -1730,6 +2091,62 @@ function initYrSearchable(){
   },100);
 }
 
+
+// ===== LOAN PERSON SUMMARY (INLINE) =====
+function renderLoanPersonSummary(){
+  var el = document.getElementById('loan-person-summary');
+  if(!el) return;
+
+  var persons = [...new Set(DB.loan.map(function(r){return r.person;}))];
+  if(!persons.length){el.innerHTML='<div class="empty">No data.</div>';return;}
+
+  var h = '<table><thead><tr><th>Person</th><th>Type</th><th>Currency</th><th>Total</th><th>Paid Back</th><th>Remaining</th></tr></thead><tbody>';
+
+  persons.forEach(function(person){
+    var loans = DB.loan.filter(function(r){return r.person===person;});
+    var currencies = [...new Set(loans.map(function(r){return r.currency;}))];
+
+    currencies.forEach(function(cur){
+      var curLoans = loans.filter(function(r){return r.currency===cur;});
+
+      // OWE
+      var oweLoans = curLoans.filter(function(r){return r.type==='owe';});
+      if(oweLoans.length){
+        var tot = oweLoans.reduce(function(s,r){return s+r.amount;},0);
+        var paid = oweLoans.reduce(function(s,r){return s+(r.paid||0);},0);
+        var rem = tot - paid;
+        h+='<tr>'
+          +'<td><strong>'+person+'</strong></td>'
+          +'<td><span class="badge-owe">Owe</span></td>'
+          +'<td>'+cur+'</td>'
+          +'<td>'+N(tot)+'</td>'
+          +'<td class="pos">+'+N(paid)+'</td>'
+          +'<td class="'+(rem>0?'neg':'pos')+'">'+(rem>0?'-'+N(rem):'✅ Cleared')+'</td>'
+          +'</tr>';
+      }
+
+      // LEND
+      var lendLoans = curLoans.filter(function(r){return r.type==='lend';});
+      if(lendLoans.length){
+        var tot2 = lendLoans.reduce(function(s,r){return s+r.amount;},0);
+        var paid2 = lendLoans.reduce(function(s,r){return s+(r.paid||0);},0);
+        var rem2 = tot2 - paid2;
+        h+='<tr>'
+          +'<td><strong>'+person+'</strong></td>'
+          +'<td><span class="badge-lend">Lend</span></td>'
+          +'<td>'+cur+'</td>'
+          +'<td>'+N(tot2)+'</td>'
+          +'<td class="pos">+'+N(paid2)+'</td>'
+          +'<td class="'+(rem2>0?'neg':'pos')+'">'+(rem2>0?'-'+N(rem2):'✅ Cleared')+'</td>'
+          +'</tr>';
+      }
+    });
+  });
+
+  h+='</tbody></table>';
+  el.innerHTML = h;
+}
+
 </script>
-</body>
+<div style="text-align:center;padding:16px;border-top:1px solid #e2e8f0;color:#6b7280;font-size:11px;">Developed by Hafez MD Nazim Uddin</div></body>
 </html>
