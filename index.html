@@ -177,6 +177,12 @@ input:checked+.slider:before{transform:translateX(20px);}
 </head>
 <body>
 
+<script>
+if (true) {
+  document.write('<style>#auth-screen{display:none!important;}#app-content{display:block!important;}</style>');
+}
+</script>
+
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
 
@@ -433,7 +439,7 @@ input:checked+.slider:before{transform:translateX(20px);}
       <select id="exp-fyr" onchange="renderExp()"><option value="all">All Years</option></select>
       <select id="exp-fmo" onchange="renderExp()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
     </div>
-    <select id="exp-fcat" onchange="renderExp()" style="width:100%;margin-bottom:10px;"><option value="">All Categories</option></select>
+    <select id="exp-fcur" onchange="window._cs.exp=this.value;renderExp()" style="width:100%;margin-bottom:10px;"></select>
     <div class="tbl-wrap" id="exp-tbl"></div>
   </div>
 </div>
@@ -817,7 +823,7 @@ input:checked+.slider:before{transform:translateX(20px);}
 // ===== PREVIEW MODE TOGGLE =====
 // true করলে Login system bypass হয়ে সরাসরি app দেখাবে (preview/testing এর জন্য)
 // সব feature add শেষ হলে false করে দিন যাতে Firebase login আবার কাজ করে
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 // ===== FIREBASE SETUP =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -1249,12 +1255,6 @@ function fillCats(){
   var cur=el.value; el.innerHTML='';
   cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o);});
   if(cur&&el.querySelector('option[value="'+cur+'"]')) el.value=cur;
-  // Filter dropdown: exactly same as settings categories
-  var fel=document.getElementById('exp-fcat'); if(fel){
-    var fcur=fel.value; fel.innerHTML='<option value="">All Categories</option>';
-    cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;fel.appendChild(o);});
-    if(fcur&&fel.querySelector('option[value="'+fcur+'"]')) fel.value=fcur;
-  }
   renderCatChips();
 }
 
@@ -1837,16 +1837,21 @@ function renderInv(){
 // RENDER EXPENSE
 function renderExp(){
   var yr=document.getElementById('exp-fyr').value, mo=document.getElementById('exp-fmo').value;
-  var fcat=document.getElementById('exp-fcat')?document.getElementById('exp-fcat').value:'';
   var searchEl=document.querySelector('#s-exp .search-box');
   var q=searchEl?searchEl.value.toLowerCase():'';
   // Currency-filtered summary (like loan summary)
   var expCurs=[...new Set(DB.exp.map(function(r){return r.currency;}))];
   var selExpCur=getCurSel('exp',expCurs);
+  // Sync exp-fcur dropdown options (no "All Currency" option — just pick one)
+  var fcurEl=document.getElementById('exp-fcur');
+  if(fcurEl){
+    fcurEl.innerHTML=expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('');
+    fcurEl.value=selExpCur;
+  }
+  var fcur=selExpCur;
   var data=DB.exp.filter(function(r){
     return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
-    (!fcat||r.category===fcat)&&
-    (!selExpCur||r.currency===selExpCur)&&
+    (!fcur||r.currency===fcur)&&
     (!q||r.category.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
   });
   var filteredExp=DB.exp.filter(function(r){return r.currency===selExpCur;});
