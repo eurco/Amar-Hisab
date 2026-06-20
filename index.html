@@ -22,7 +22,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .topbar-right{display:flex;align-items:center;gap:6px;}
 .kalima-glow{display:block;font-size:15px;color:rgba(255,255,255,0.9);margin-top:2px;letter-spacing:0.5px;animation:kalimaGlow 3.5s ease-in-out infinite;}
 @keyframes kalimaGlow{0%,100%{opacity:0.25;text-shadow:none;}50%{opacity:1;text-shadow:0 0 6px rgba(255,255,255,0.85),0 0 12px rgba(255,255,255,0.5);}}
-.global-search-input{width:100%;max-width:140px;padding:6px 9px;border-radius:7px;border:none;background:rgba(255,255,255,0.15);color:white;font-size:11px;font-family:inherit;outline:none;}
+.global-search-input{width:70px;padding:3px 6px;border-radius:6px;border:none;background:rgba(255,255,255,0.15);color:white;font-size:9px;font-family:inherit;outline:none;}
 .global-search-input::placeholder{color:rgba(255,255,255,0.65);}
 .global-search-results{position:fixed;top:56px;left:12px;right:12px;background:var(--card);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.25);max-height:320px;overflow-y:auto;display:none;z-index:300;}
 .gsr-item{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;color:var(--text);display:flex;gap:8px;align-items:flex-start;}
@@ -43,11 +43,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
 .card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+#s-set .form-grid input, #s-set .form-grid select{max-width:100%;font-size:11px;height:28px;}
+#s-set .form-grid{grid-template-columns:1fr 1fr 1fr;}
+#s-set .form-group.full{grid-column:span 1;}
 .form-group{display:flex;flex-direction:column;gap:4px;}
 .form-group.full{grid-column:1/-1;}
 .form-col{display:flex;flex-direction:column;gap:10px;}
 label{font-size:11px;font-weight:600;color:var(--muted);}
-select,input[type=text],input[type=number],input[type=date]{width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);outline:none;}
+select,input[type=text],input[type=number],input[type=date]{width:100%;padding:4px 8px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;color:var(--text);background:var(--card);outline:none;height:30px;box-sizing:border-box;}
 select:focus,input:focus{border-color:var(--teal);}
 .filter-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
@@ -168,6 +171,7 @@ input:checked+.slider:before{transform:translateX(20px);}
 .user-bar{background:#0d4a3a;color:white;padding:6px 16px;font-size:11px;display:flex;align-items:center;justify-content:space-between;}
 .sync-status{font-size:10px;opacity:0.75;}
 .btn-logout{background:rgba(255,255,255,0.15);border:none;color:white;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;}
+#cur-search-results div:hover{background:var(--bg);}
 
 </style>
 </head>
@@ -226,9 +230,10 @@ input:checked+.slider:before{transform:translateX(20px);}
       <span id="dt" style="font-size:10px;opacity:0.6;display:block;"></span>
     </div>
   </div>
-  <span class="kalima-glow" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;">لا إله إلا الله محمد رسول الله</span>
-  <div class="topbar-right" style="position:relative;flex:1;justify-content:flex-end;">
-    <input type="text" id="global-search" class="global-search-input" placeholder="🔍 Search..." oninput="runGlobalSearch(this.value)">
+
+  <div class="topbar-right" style="position:relative;justify-content:flex-end;display:flex;align-items:center;background:rgba(255,255,255,0.15);border-radius:6px;padding:3px 7px;gap:4px;">
+    <span style="font-size:12px;opacity:0.8;">🔍</span>
+    <input type="text" id="global-search" class="global-search-input" placeholder="Search..." oninput="runGlobalSearch(this.value)" style="width:55px;padding:0;border:none;background:transparent;color:white;font-size:10px;outline:none;">
     <div id="global-search-results" class="global-search-results"></div>
   </div>
 </div>
@@ -428,7 +433,7 @@ input:checked+.slider:before{transform:translateX(20px);}
       <select id="exp-fyr" onchange="renderExp()"><option value="all">All Years</option></select>
       <select id="exp-fmo" onchange="renderExp()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
     </div>
-    <select id="exp-fcat" onchange="renderExp()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);margin-bottom:10px;"><option value="">All Categories</option></select>
+    <select id="exp-fcat" onchange="renderExp()" style="width:100%;margin-bottom:10px;"><option value="">All Categories</option></select>
     <div class="tbl-wrap" id="exp-tbl"></div>
   </div>
 </div>
@@ -445,13 +450,9 @@ input:checked+.slider:before{transform:translateX(20px);}
     <div class="form-grid">
       <div class="form-group full"><label id="loan-person-lbl">কার কাছ থেকে নিলাম</label><input type="text" id="loan-person" placeholder="নাম..." list="loan-person-list"><datalist id="loan-person-list"></datalist></div>
       <div class="form-group"><label>Currency</label>
-        <div style="display:flex;gap:6px;">
-          <select id="loan-cur" onchange="renderLoanSummary();checkCustomCur()" style="flex:1;">
-            <option value="SAR">SAR</option><option value="BDT">BDT</option><option value="USD">USD</option>
-            <option value="__custom">+ নতুন Currency</option>
-          </select>
-          <input type="text" id="loan-cur-custom" placeholder="যেমন: EUR" style="display:none;width:80px;flex:none;">
-        </div>
+        <select id="loan-cur" onchange="renderLoanSummary();">
+          <option value="SAR">SAR</option><option value="BDT">BDT</option><option value="USD">USD</option>
+        </select>
       </div>
       <div class="form-group"><label>Amount</label><input type="number" id="loan-amt" placeholder="1000"></div>
       <div class="form-group full"><label>Date</label><input type="date" id="loan-dt"></div>
@@ -498,80 +499,6 @@ input:checked+.slider:before{transform:translateX(20px);}
 <div class="section" id="s-set">
 <div class="tab-banner" style="background:#1a3a5c;"><div class="tab-banner-icon">⚙️</div><div><div class="tab-banner-title">Settings</div><div class="tab-banner-sub">Customize your app</div></div></div>
   <div class="acc-list">
-
-    <!-- 0. Account -->
-    <div class="acc-item">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span>🔐 Account</span><span class="acc-arrow">▶</span>
-      </div>
-      <div class="acc-body">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
-          <span style="font-size:13px;color:var(--muted);">📧 Email</span>
-          <span id="user-email-display" style="font-size:13px;font-weight:600;">👤 Loading...</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:14px;">
-          <span style="font-size:13px;color:var(--muted);">☁️ Sync Status</span>
-          <span class="sync-status" id="sync-status" style="font-size:13px;font-weight:600;">✅ Synced</span>
-        </div>
-
-        <!-- Change Email -->
-        <div style="padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
-          <div onclick="toggleSecForm('ce')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
-            <span style="font-size:13px;font-weight:600;">✉️ Change Email</span>
-            <span id="ce-arrow" style="font-size:11px;color:var(--muted);">▶</span>
-          </div>
-          <div id="ce-form" style="display:none;margin-top:12px;">
-            <div id="ce-err" style="background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;"></div>
-            <div id="ce-success" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;">✅ Email updated successfully!</div>
-            <input type="email" id="ce-new-email" placeholder="📧 New Email address" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
-            <input type="password" id="ce-current-pass" placeholder="🔒 Current Password (to confirm)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;box-sizing:border-box;">
-            <button onclick="changeUserEmail()" id="ce-btn" style="width:100%;background:var(--teal);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Update</button>
-          </div>
-        </div>
-
-        <!-- Change Password -->
-        <div style="padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:14px;">
-          <div onclick="toggleSecForm('cp')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
-            <span style="font-size:13px;font-weight:600;">🔑 Change Password</span>
-            <span id="cp-arrow" style="font-size:11px;color:var(--muted);">▶</span>
-          </div>
-          <div id="cp-form" style="display:none;margin-top:12px;">
-            <div id="cp-err" style="background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;"></div>
-            <div id="cp-success" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;">✅ Password updated successfully!</div>
-            <input type="password" id="cp-current-pass" placeholder="🔒 Current Password" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
-            <input type="password" id="cp-new-pass" placeholder="🔒 New Password (min 6 characters)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
-            <input type="password" id="cp-new-pass2" placeholder="🔒 Confirm New Password" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;box-sizing:border-box;">
-            <button onclick="changeUserPassword()" id="cp-btn" style="width:100%;background:var(--teal);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Update</button>
-          </div>
-        </div>
-
-        <button class="btn-logout" onclick="logoutUser()" style="width:100%;background:var(--red);color:#fff;border:none;padding:11px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">🚪 Logout</button>
-      </div>
-    </div>
-
-    <!-- 0.5 Language & Theme -->
-    <div class="acc-item">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span>🎨 Language & Theme</span><span class="acc-arrow">▶</span>
-      </div>
-      <div class="acc-body">
-        <div style="padding:12px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">🌐 Language</div>
-          <div style="display:flex;gap:8px;">
-            <button class="lang-btn active" data-lang="en" onclick="setLang('en',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">EN</button>
-            <button class="lang-btn" data-lang="bn" onclick="setLang('bn',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">বাং</button>
-            <button class="lang-btn" data-lang="ar" onclick="setLang('ar',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">عر</button>
-          </div>
-        </div>
-        <div class="toggle-wrap">
-          <span style="font-size:13px;">🌙 Dark Mode</span>
-          <label class="toggle">
-            <input type="checkbox" id="dark-toggle-settings" onchange="toggleDarkSettings()">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-    </div>
 
     <!-- 1. Profile -->
     <div class="acc-item">
@@ -628,58 +555,77 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
     </div>
 
-
+    <!-- 2. Account -->
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
-        <span>🎞️ Dashboard Slide Cards</span><span class="acc-arrow">▶</span>
+        <span>🔐 Account</span><span class="acc-arrow">▶</span>
       </div>
       <div class="acc-body">
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">কোন tab Dashboard-এ slide হিসেবে দেখাবে বেছে নিন।</p>
-        <div class="slide-opt-list">
-          <div class="slide-opt-item"><div class="slide-opt-label">📈 Salary</div><label class="toggle"><input type="checkbox" id="sl-sal" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
-          <div class="slide-opt-item"><div class="slide-opt-label">💸 Transfer</div><label class="toggle"><input type="checkbox" id="sl-tr" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
-          <div class="slide-opt-item"><div class="slide-opt-label">🤝 Samity</div><label class="toggle"><input type="checkbox" id="sl-sam" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
-          <div class="slide-opt-item"><div class="slide-opt-label">📈 Investment</div><label class="toggle"><input type="checkbox" id="sl-inv" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
-          <div class="slide-opt-item"><div class="slide-opt-label">💳 Expense</div><label class="toggle"><input type="checkbox" id="sl-exp" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
-          <div class="slide-opt-item"><div class="slide-opt-label">💰 Loan</div><label class="toggle"><input type="checkbox" id="sl-loan" onchange="saveSlideOpts();renderDash()"><span class="slider"></span></label></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
+          <span style="font-size:13px;color:var(--muted);">📧 Email</span>
+          <span id="user-email-display" style="font-size:13px;font-weight:600;">👤 Loading...</span>
         </div>
-      </div>
-    </div>
 
-    <!-- 3. Expense Categories -->
-    <div class="acc-item">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span>📂 Expense Categories</span><span class="acc-arrow">▶</span>
-      </div>
-      <div class="acc-body">
-        <div id="cat-chips" style="margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="new-cat" placeholder="New category name...">
-          <button class="btn-add" onclick="addExpCatSet()">+ Add</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Download Report -->
-    <div class="acc-item">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span>📄 Download Report</span><span class="acc-arrow">▶</span>
-      </div>
-      <div class="acc-body">
-        <div class="form-col">
-          <div class="form-group"><label>Year</label><select id="pdf-yr"><option value="all">All Years</option></select></div>
-          <div class="form-group"><label>Month</label>
-            <select id="pdf-mo"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+        <!-- Change Email -->
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
+          <div onclick="toggleSecForm('ce')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <span style="font-size:13px;font-weight:600;">✉️ Change Email</span>
+            <span id="ce-arrow" style="font-size:11px;color:var(--muted);">▶</span>
           </div>
-          <div class="form-group"><label>Section</label>
-            <select id="pdf-sec"><option value="all">All</option><option value="sal">Salary</option><option value="tr">Transfer</option><option value="sam">Samity</option><option value="inv">Investment</option><option value="exp">Expense</option><option value="loan">Loan</option></select>
+          <div id="ce-form" style="display:none;margin-top:12px;">
+            <div id="ce-err" style="background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;"></div>
+            <div id="ce-success" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;">✅ Email updated successfully!</div>
+            <input type="email" id="ce-new-email" placeholder="📧 New Email address" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
+            <input type="password" id="ce-current-pass" placeholder="🔒 Current Password (to confirm)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;box-sizing:border-box;">
+            <button onclick="changeUserEmail()" id="ce-btn" style="width:100%;background:var(--teal);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Update</button>
           </div>
-          <button class="btn-red2" onclick="dlPDF()">📄 Download Report</button>
+        </div>
+
+        <!-- Change Password -->
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:14px;">
+          <div onclick="toggleSecForm('cp')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <span style="font-size:13px;font-weight:600;">🔑 Change Password</span>
+            <span id="cp-arrow" style="font-size:11px;color:var(--muted);">▶</span>
+          </div>
+          <div id="cp-form" style="display:none;margin-top:12px;">
+            <div id="cp-err" style="background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;"></div>
+            <div id="cp-success" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:10px;display:none;">✅ Password updated successfully!</div>
+            <input type="password" id="cp-current-pass" placeholder="🔒 Current Password" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
+            <input type="password" id="cp-new-pass" placeholder="🔒 New Password (min 6 characters)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:8px;box-sizing:border-box;">
+            <input type="password" id="cp-new-pass2" placeholder="🔒 Confirm New Password" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;box-sizing:border-box;">
+            <button onclick="changeUserPassword()" id="cp-btn" style="width:100%;background:var(--teal);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Update</button>
+          </div>
+        </div>
+
+        <button class="btn-logout" onclick="logoutUser()" style="width:100%;background:var(--red);color:#fff;border:none;padding:11px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- 3. Language & Theme -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>🎨 Language & Theme</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">🌐 Language</div>
+          <div style="display:flex;gap:8px;">
+            <button class="lang-btn active" data-lang="en" onclick="setLang('en',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">EN</button>
+            <button class="lang-btn" data-lang="bn" onclick="setLang('bn',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">বাং</button>
+            <button class="lang-btn" data-lang="ar" onclick="setLang('ar',this)" style="flex:1;padding:9px;font-size:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);">عر</button>
+          </div>
+        </div>
+        <div class="toggle-wrap">
+          <span style="font-size:13px;">🌙 Dark Mode</span>
+          <label class="toggle">
+            <input type="checkbox" id="dark-toggle-settings" onchange="toggleDarkSettings()">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
     </div>
 
-    <!-- 5. Reminders -->
+    <!-- 4. Reminders -->
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
         <span>🔔 Reminders</span><span class="acc-arrow">▶</span>
@@ -714,7 +660,72 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
     </div>
 
-    <!-- 6. Data Backup -->
+    <!-- 5. Expense Categories -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>📂 Expense Categories</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <div id="cat-chips" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="new-cat" placeholder="New category name...">
+          <button class="btn-add" onclick="addExpCatSet()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5b. Currency Management -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>💱 Currency Management</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <div id="cur-chips" style="margin-bottom:10px;"></div>
+        <div style="position:relative;z-index:10;">
+          <input type="text" id="cur-search" placeholder="🔍 দেশ বা currency name লিখুন... (e.g. Saudi, AED, India)" oninput="renderCurSearch()" autocomplete="off" onblur="setTimeout(function(){var r=document.getElementById('cur-search-results');if(r)r.style.display='none';},200)">
+          <div id="cur-search-results" style="display:none;position:fixed;z-index:99998;background:var(--card);border:1.5px solid var(--border);border-radius:10px;max-height:220px;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.15);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Dashboard Slide Cards -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>🎞️ Dashboard Slide Cards</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">কোন tab Dashboard-এ slide হিসেবে দেখাবে বেছে নিন।</p>
+        <div class="slide-opt-list">
+          <div class="slide-opt-item"><div class="slide-opt-label">📈 Salary</div><label class="toggle"><input type="checkbox" id="sl-sal" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
+          <div class="slide-opt-item"><div class="slide-opt-label">💸 Transfer</div><label class="toggle"><input type="checkbox" id="sl-tr" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
+          <div class="slide-opt-item"><div class="slide-opt-label">🤝 Samity</div><label class="toggle"><input type="checkbox" id="sl-sam" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
+          <div class="slide-opt-item"><div class="slide-opt-label">📈 Investment</div><label class="toggle"><input type="checkbox" id="sl-inv" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
+          <div class="slide-opt-item"><div class="slide-opt-label">💳 Expense</div><label class="toggle"><input type="checkbox" id="sl-exp" onchange="saveSlideOpts();renderDash()" checked><span class="slider"></span></label></div>
+          <div class="slide-opt-item"><div class="slide-opt-label">💰 Loan</div><label class="toggle"><input type="checkbox" id="sl-loan" onchange="saveSlideOpts();renderDash()"><span class="slider"></span></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Download Report -->
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span>📄 Download Report</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <div class="form-col">
+          <div class="form-group"><label>Year</label><select id="pdf-yr"><option value="all">All Years</option></select></div>
+          <div class="form-group"><label>Month</label>
+            <select id="pdf-mo"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+          </div>
+          <div class="form-group"><label>Section</label>
+            <select id="pdf-sec"><option value="all">All</option><option value="sal">Salary</option><option value="tr">Transfer</option><option value="sam">Samity</option><option value="inv">Investment</option><option value="exp">Expense</option><option value="loan">Loan</option></select>
+          </div>
+          <button class="btn-red2" onclick="dlPDF()">📄 Download Report</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Data Backup -->
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
         <span>💾 Data Backup</span><span class="acc-arrow">▶</span>
@@ -730,6 +741,7 @@ input:checked+.slider:before{transform:translateX(20px);}
         </div>
       </div>
     </div>
+
 
     <!-- 7. About & Legal -->
     <div class="acc-item">
@@ -1130,13 +1142,53 @@ window.sendForgotPasswordEmail = async function() {
 </script>
 
 <script>
-var KEY='amar_hisab_v3', CATS_KEY='amar_hisab_cats';
+var KEY='amar_hisab_v3', CATS_KEY='amar_hisab_cats', CURS_KEY='amar_hisab_currencies';
 var DEFAULT_CATS=['Food','Transport','Rent','Medical','Shopping','Clothing','Entertainment','Education','Utilities','Other'];
+var DEFAULT_CURS=['SAR','BDT','USD'];
+// World currencies database: code -> country/name (for search)
+var WORLD_CURRENCIES=[
+  {code:'SAR',name:'Saudi Arabia - Riyal'},{code:'BDT',name:'Bangladesh - Taka'},
+  {code:'USD',name:'United States - Dollar'},{code:'EUR',name:'European Union - Euro'},
+  {code:'GBP',name:'United Kingdom - Pound'},{code:'AED',name:'UAE - Dirham'},
+  {code:'INR',name:'India - Rupee'},{code:'PKR',name:'Pakistan - Rupee'},
+  {code:'MYR',name:'Malaysia - Ringgit'},{code:'SGD',name:'Singapore - Dollar'},
+  {code:'QAR',name:'Qatar - Riyal'},{code:'KWD',name:'Kuwait - Dinar'},
+  {code:'OMR',name:'Oman - Rial'},{code:'BHD',name:'Bahrain - Dinar'},
+  {code:'JOD',name:'Jordan - Dinar'},{code:'EGP',name:'Egypt - Pound'},
+  {code:'TRY',name:'Turkey - Lira'},{code:'JPY',name:'Japan - Yen'},
+  {code:'CNY',name:'China - Yuan'},{code:'KRW',name:'South Korea - Won'},
+  {code:'THB',name:'Thailand - Baht'},{code:'IDR',name:'Indonesia - Rupiah'},
+  {code:'PHP',name:'Philippines - Peso'},{code:'VND',name:'Vietnam - Dong'},
+  {code:'AUD',name:'Australia - Dollar'},{code:'CAD',name:'Canada - Dollar'},
+  {code:'CHF',name:'Switzerland - Franc'},{code:'NZD',name:'New Zealand - Dollar'},
+  {code:'ZAR',name:'South Africa - Rand'},{code:'NGN',name:'Nigeria - Naira'},
+  {code:'KES',name:'Kenya - Shilling'},{code:'RUB',name:'Russia - Ruble'},
+  {code:'BRL',name:'Brazil - Real'},{code:'MXN',name:'Mexico - Peso'},
+  {code:'LKR',name:'Sri Lanka - Rupee'},{code:'NPR',name:'Nepal - Rupee'},
+  {code:'AFN',name:'Afghanistan - Afghani'},{code:'IQD',name:'Iraq - Dinar'},
+  {code:'IRR',name:'Iran - Rial'},{code:'LBP',name:'Lebanon - Pound'},
+  {code:'SYP',name:'Syria - Pound'},{code:'YER',name:'Yemen - Rial'},
+  {code:'MMK',name:'Myanmar - Kyat'},{code:'HKD',name:'Hong Kong - Dollar'},
+  {code:'TWD',name:'Taiwan - Dollar'},{code:'SEK',name:'Sweden - Krona'},
+  {code:'NOK',name:'Norway - Krone'},{code:'DKK',name:'Denmark - Krone'},
+  {code:'PLN',name:'Poland - Zloty'},{code:'CZK',name:'Czech - Koruna'}
+];
 var LOAN_TYPE='owe';
 window._cs={};
 function getCurSel(key,curs){var v=window._cs[key];return(v&&curs.indexOf(v)>-1)?v:(curs[0]||'');}
 
-function loadDB(){ try{var d=localStorage.getItem(KEY);return d?JSON.parse(d):{sal:[],tr:[],sam:[],inv:[],exp:[],loan:[]};}catch(e){return {sal:[],tr:[],sam:[],inv:[],exp:[],loan:[]};} }
+function loadDB(){
+  var d;
+  try{ var raw=localStorage.getItem(KEY); d=raw?JSON.parse(raw):null; }catch(e){ d=null; }
+  if(!d) d={};
+  if(!Array.isArray(d.sal)) d.sal=[];
+  if(!Array.isArray(d.tr)) d.tr=[];
+  if(!Array.isArray(d.sam)) d.sam=[];
+  if(!Array.isArray(d.inv)) d.inv=[];
+  if(!Array.isArray(d.exp)) d.exp=[];
+  if(!Array.isArray(d.loan)) d.loan=[];
+  return d;
+}
 function saveDB(){
   try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}
   // Sync to Firebase
@@ -1144,6 +1196,9 @@ function saveDB(){
 }
 function loadCats(){ try{var d=localStorage.getItem(CATS_KEY);return d?JSON.parse(d):[...DEFAULT_CATS];}catch(e){return [...DEFAULT_CATS];} }
 function saveCats(c){ try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catch(e){} }
+function loadCurs(){ try{var d=localStorage.getItem(CURS_KEY);return d?JSON.parse(d):[...DEFAULT_CURS];}catch(e){return [...DEFAULT_CURS];} }
+function saveCurs(c){ try{localStorage.setItem(CURS_KEY,JSON.stringify(c));}catch(e){} }
+
 
 var DB=loadDB();
 if(!DB.loan) DB.loan=[];
@@ -1213,6 +1268,72 @@ function renderCatChips(){
 
 function delCat(i){ var cats=loadCats(); cats.splice(i,1); saveCats(cats); fillCats(); }
 
+// CURRENCY MANAGEMENT
+function renderCurChips(){
+  var el=document.getElementById('cur-chips'); if(!el)return;
+  var curs=loadCurs();
+  el.innerHTML=curs.map(function(c,i){
+    var info=WORLD_CURRENCIES.find(function(w){return w.code===c;});
+    var label=info?(c+' — '+info.name):c;
+    return '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;margin:3px;">'+label+'<button onclick="delCur('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;">×</button></span>';
+  }).join('');
+}
+
+function delCur(i){
+  var curs=loadCurs();
+  if(curs.length<=1){alert('অন্তত একটি Currency থাকতে হবে!');return;}
+  curs.splice(i,1); saveCurs(curs); renderCurChips(); fillAllCurSelects();
+}
+
+function addCurSet(code){
+  var curs=loadCurs();
+  if(curs.indexOf(code)>-1){alert('এই Currency আগেই আছে!');return;}
+  curs.push(code); saveCurs(curs); renderCurChips(); fillAllCurSelects();
+  document.getElementById('cur-search').value='';
+  document.getElementById('cur-search-results').style.display='none';
+}
+
+function renderCurSearch(){
+  var inputEl=document.getElementById('cur-search');
+  var q=(inputEl.value||'').trim().toLowerCase();
+  var resEl=document.getElementById('cur-search-results');
+  // Position the fixed dropdown right under the input box
+  var rect=inputEl.getBoundingClientRect();
+  resEl.style.top=(rect.bottom+4)+'px';
+  resEl.style.left=rect.left+'px';
+  resEl.style.width=rect.width+'px';
+  if(!q){ resEl.style.display='none'; resEl.innerHTML=''; return; }
+  var curs=loadCurs();
+  var matches=WORLD_CURRENCIES.filter(function(w){
+    return w.code.toLowerCase().includes(q)||w.name.toLowerCase().includes(q);
+  }).slice(0,15);
+  if(!matches.length){
+    resEl.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted);">কোনো ফলাফল নেই</div>';
+    resEl.style.display='block';
+    return;
+  }
+  resEl.innerHTML=matches.map(function(w){
+    var already=curs.indexOf(w.code)>-1;
+    return '<div onclick="'+(already?'':'addCurSet(\''+w.code+'\')')+'" style="padding:9px 12px;font-size:12px;cursor:'+(already?'default':'pointer')+';border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;'+(already?'opacity:0.5;':'')+'">'
+      +'<span><b>'+w.code+'</b> — '+w.name+'</span>'
+      +(already?'<span style="font-size:10px;color:var(--green);">✓ Added</span>':'<span style="font-size:10px;color:var(--primary);">+ Add</span>')
+      +'</div>';
+  }).join('');
+  resEl.style.display='block';
+}
+
+// Fill all currency <select> elements across the app from the saved currency list
+function fillAllCurSelects(){
+  var curs=loadCurs();
+  var ids=['sal-cur','tr-cur','sam-cur','inv-cur','exp-cur','loan-cur'];
+  ids.forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    var cur=el.value; el.innerHTML='';
+    curs.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o);});
+    if(cur&&el.querySelector('option[value="'+cur+'"]')) el.value=cur;
+  });
+}
+
 function addExpCat(){
   var name=prompt('নতুন Category নাম:'); if(!name||!name.trim())return;
   var cats=loadCats(); if(cats.indexOf(name.trim())>-1){alert('Already exists!');return;}
@@ -1268,7 +1389,7 @@ function showTab(name,btn){
   if(name==='inv') renderInv();
   if(name==='exp') renderExp();
   if(name==='loan'){renderLoan();renderLoanSummary();renderLoanPersons();}
-  if(name==='set'){fillPDFYears();renderCatChips();}
+  if(name==='set'){fillPDFYears();renderCatChips();renderCurChips();}
 }
 
 // GLOBAL SEARCH
@@ -1345,19 +1466,9 @@ function syncYrs(){
 }
 
 // LOAN TAB
-function checkCustomCur(){
-  var sel=document.getElementById('loan-cur');
-  var inp=document.getElementById('loan-cur-custom');
-  if(sel&&inp) inp.style.display=sel.value==='__custom'?'block':'none';
-}
-
 function getLoanCur(){
   var sel=document.getElementById('loan-cur');
-  if(sel.value==='__custom'){
-    var v=(document.getElementById('loan-cur-custom').value||'').trim().toUpperCase();
-    return v||'';
-  }
-  return sel.value;
+  return sel?sel.value:'';
 }
 
 function setLoanTab(t){
@@ -1440,15 +1551,6 @@ function addLoan(){
   if(!amt){alert('Amount লিখুন!');return;}
   DB.loan.unshift({type:LOAN_TYPE,person:person,currency:cur,amount:amt,paid:0,date:dt,notes:nt});
   saveDB();syncYrs();
-  // Add new currency to loan-cur select if not already there
-  var sel=document.getElementById('loan-cur');
-  if(sel&&!sel.querySelector('option[value="'+cur+'"]')){
-    var o=document.createElement('option');o.value=cur;o.textContent=cur;
-    sel.insertBefore(o,sel.querySelector('option[value="__custom"]'));
-  }
-  if(sel) sel.value=cur;
-  var cinp=document.getElementById('loan-cur-custom');
-  if(cinp){cinp.value='';cinp.style.display='none';}
   renderLoan();renderLoanSummary();renderLoanPersons();
   document.getElementById('loan-person').value='';document.getElementById('loan-amt').value='';document.getElementById('loan-nt').value='';
   alert('✅ Saved!');
@@ -1535,17 +1637,18 @@ function openEdit(type,idx){
 
 function saveEdit(type,idx){
   var r=DB[type][idx];
+  var ey=document.getElementById('e-yr'), emo=document.getElementById('e-mo'), ecur=document.getElementById('e-cur'), emethod=document.getElementById('e-method'), ecat=document.getElementById('e-cat');
   if(type==='sal'){
-    r.year=document.getElementById('e-yr').value||r.year;
-    r.month=document.getElementById('e-mo').value||r.month;
-    r.currency=document.getElementById('e-cur').value||r.currency;
+    if(ey) r.year=ey.value||r.year;
+    if(emo) r.month=emo.value||r.month;
+    if(ecur) r.currency=ecur.value||r.currency;
     r.expected=parseFloat(document.getElementById('e-exp').value)||r.expected;
     r.received=parseFloat(document.getElementById('e-rec').value)||r.received;
     r.date=document.getElementById('e-dt').value;
     r.notes=document.getElementById('e-nt').value;
     saveDB();closeModal();renderSal();
   } else if(type==='tr'){
-    r.method=document.getElementById('e-method').value||r.method;
+    if(emethod) r.method=emethod.value||r.method;
     r.amount=parseFloat(document.getElementById('e-amt').value)||r.amount;
     r.date=document.getElementById('e-dt').value;
     r.notes=document.getElementById('e-nt').value;
@@ -1560,7 +1663,7 @@ function saveEdit(type,idx){
     r.notes=document.getElementById('e-nt').value;
     saveDB();closeModal();renderInv();
   } else if(type==='exp'){
-    r.category=document.getElementById('e-cat').value||r.category;
+    if(ecat) r.category=ecat.value||r.category;
     r.amount=parseFloat(document.getElementById('e-amt').value)||r.amount;
     r.date=document.getElementById('e-dt').value;
     r.notes=document.getElementById('e-nt').value;
@@ -1580,15 +1683,12 @@ function closeModal(){ document.getElementById('modal').style.display='none'; }
 function renderSal(search){
   var yr=document.getElementById('sal-fyr').value, mo=document.getElementById('sal-fmo').value;
   var q=(search||'').toLowerCase();
-  var data=DB.sal.filter(function(r){
-    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
-    (!q||r.year.includes(q)||r.month.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q)||r.currency.toLowerCase().includes(q));
-  });
   // Currency summary
   var salCurs=[...new Set(DB.sal.map(function(r){return r.currency;}))];
   var salSumEl=document.getElementById('sal-stats');
+  var selC='';
   if(salSumEl&&salCurs.length>0){
-    var selC=getCurSel('sal',salCurs);
+    selC=getCurSel('sal',salCurs);
     var filt=DB.sal.filter(function(r){return r.currency===selC;});
     var totE=filt.reduce(function(s,r){return s+r.expected;},0);
     var totR=filt.reduce(function(s,r){return s+r.received;},0);
@@ -1608,6 +1708,11 @@ function renderSal(search){
       +'<div style="font-size:11px;color:var(--muted);margin-top:6px;">'+selC+' • '+filt.length+' records</div>'
       +'</div>';
   } else if(salSumEl){ salSumEl.innerHTML=''; }
+  var data=DB.sal.filter(function(r){
+    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
+    (!selC||r.currency===selC)&&
+    (!q||r.year.includes(q)||r.month.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q)||r.currency.toLowerCase().includes(q));
+  });
   if(!data.length){document.getElementById('sal-tbl').innerHTML='<div class="empty">No data.</div>';return;}
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Expected</th><th>Received</th><th>Diff</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
   var tE=0,tR=0;
@@ -1626,16 +1731,11 @@ function renderSal(search){
 function renderTr(search){
   var yr=document.getElementById('tr-fyr').value, mo=document.getElementById('tr-fmo').value;
   var q=(search||'').toLowerCase();
-  var trCurSelEl=document.getElementById('tr-stats')&&document.getElementById('tr-stats').querySelector('select')?document.getElementById('tr-stats').querySelector('select').value:null;
-  var data=DB.tr.filter(function(r){
-    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
-    (!trCurSelEl||r.currency===trCurSelEl)&&
-    (!q||r.method.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
-  });
   var trCurs=[...new Set(DB.tr.map(function(r){return r.currency;}))];
   var trSumEl=document.getElementById('tr-stats');
+  var selC='';
   if(trSumEl&&trCurs.length>0){
-    var selC=getCurSel('tr',trCurs);
+    selC=getCurSel('tr',trCurs);
     var filt=DB.tr.filter(function(r){return r.currency===selC;});
     var tot2=filt.reduce(function(s,r){return s+r.amount;},0);
     trSumEl.innerHTML='<div class="stat-box gold" style="grid-column:1/-1;">'
@@ -1648,6 +1748,11 @@ function renderTr(search){
       +'<div style="font-size:11px;color:var(--muted);margin-top:4px;">'+filt.length+' records</div>'
       +'</div>';
   } else if(trSumEl){ trSumEl.innerHTML=''; }
+  var data=DB.tr.filter(function(r){
+    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
+    (!selC||r.currency===selC)&&
+    (!q||r.method.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
+  });
   if(!data.length){document.getElementById('tr-tbl').innerHTML='<div class="empty">No data.</div>';return;}
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Date</th><th>Method</th><th>Amount</th><th>Cur</th><th></th></tr></thead><tbody>';
   var tot=0;
@@ -1656,7 +1761,7 @@ function renderTr(search){
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+(r.date||'-')+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'tr\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'tr\','+oi+')">🗑</button></td></tr>';
   });
-  var trTotLabel=trCurSelEl?'Total ('+trCurSelEl+')':'Total';
+  var trTotLabel=selC?'Total ('+selC+')':'Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="4">'+trTotLabel+'</td><td>'+N(tot)+'</td><td colspan="2"></td></tr></tfoot></table>';
   document.getElementById('tr-tbl').innerHTML=h;
 }
@@ -1664,12 +1769,11 @@ function renderTr(search){
 // RENDER SAMITY
 function renderSam(){
   var yr=document.getElementById('sam-fyr').value;
-  var samCursSel=document.getElementById('sam-stats')&&document.getElementById('sam-stats').querySelector('select')?document.getElementById('sam-stats').querySelector('select').value:null;
-  var data=DB.sam.filter(function(r){return (yr==='all'||r.year===yr)&&(!samCursSel||r.currency===samCursSel);});
   var samCurs=[...new Set(DB.sam.map(function(r){return r.currency;}))];
   var samSumEl=document.getElementById('sam-stats');
+  var selC='';
   if(samSumEl&&samCurs.length>0){
-    var selC=getCurSel('sam',samCurs);
+    selC=getCurSel('sam',samCurs);
     var filt=DB.sam.filter(function(r){return r.currency===selC;});
     var tot2=filt.reduce(function(s,r){return s+r.amount;},0);
     samSumEl.innerHTML='<div class="stat-box purple" style="grid-column:1/-1;">'
@@ -1682,6 +1786,7 @@ function renderSam(){
       +'<div style="font-size:11px;color:var(--muted);margin-top:4px;">'+filt.length+' months</div>'
       +'</div>';
   } else if(samSumEl){ samSumEl.innerHTML=''; }
+  var data=DB.sam.filter(function(r){return (yr==='all'||r.year===yr)&&(!selC||r.currency===selC);});
   if(!data.length){document.getElementById('sam-tbl').innerHTML='<div class="empty">No data.</div>';return;}
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
   var tot=0;
@@ -1690,7 +1795,7 @@ function renderSam(){
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'sam\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'sam\','+oi+')">🗑</button></td></tr>';
   });
-  var totLabel=samCursSel?'Total ('+samCursSel+')':'Total';
+  var totLabel=selC?'Total ('+selC+')':'Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="2">'+totLabel+'</td><td>'+N(tot)+'</td><td colspan="3"></td></tr></tfoot></table>';
   document.getElementById('sam-tbl').innerHTML=h;
 }
@@ -1698,12 +1803,11 @@ function renderSam(){
 // RENDER INVESTMENT
 function renderInv(){
   var yr=document.getElementById('inv-fyr').value;
-  var invCurSelEl=document.getElementById('inv-stats')&&document.getElementById('inv-stats').querySelector('select')?document.getElementById('inv-stats').querySelector('select').value:null;
-  var data=DB.inv.filter(function(r){return (yr==='all'||r.year===yr)&&(!invCurSelEl||r.currency===invCurSelEl);});
   var invCurs=[...new Set(DB.inv.map(function(r){return r.currency;}))];
   var invSumEl=document.getElementById('inv-stats');
+  var selC='';
   if(invSumEl&&invCurs.length>0){
-    var selC=getCurSel('inv',invCurs);
+    selC=getCurSel('inv',invCurs);
     var filt=DB.inv.filter(function(r){return r.currency===selC;});
     var tot2=filt.reduce(function(s,r){return s+r.amount;},0);
     invSumEl.innerHTML='<div class="stat-box green" style="grid-column:1/-1;">'
@@ -1716,6 +1820,7 @@ function renderInv(){
       +'<div style="font-size:11px;color:var(--muted);margin-top:4px;">'+filt.length+' months</div>'
       +'</div>';
   } else if(invSumEl){ invSumEl.innerHTML='<div class="stat-box green"><div class="stat-label">Total Invested</div><div class="stat-value">0</div></div>'; }
+  var data=DB.inv.filter(function(r){return (yr==='all'||r.year===yr)&&(!selC||r.currency===selC);});
   if(!data.length){document.getElementById('inv-tbl').innerHTML='<div class="empty">No data.</div>';return;}
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th><th>Running Total</th><th></th></tr></thead><tbody>';
   var run=0;
@@ -1724,7 +1829,7 @@ function renderInv(){
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td style="color:var(--green);font-weight:600">'+N(run)+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'inv\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'inv\','+oi+')">🗑</button></td></tr>';
   });
-  var invTotLabel=invCurSelEl?'Total ('+invCurSelEl+')':'Total';
+  var invTotLabel=selC?'Total ('+selC+')':'Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="2">'+invTotLabel+'</td><td>'+N(run)+'</td><td colspan="3"></td></tr></tfoot></table>';
   document.getElementById('inv-tbl').innerHTML=h;
 }
@@ -1735,14 +1840,15 @@ function renderExp(){
   var fcat=document.getElementById('exp-fcat')?document.getElementById('exp-fcat').value:'';
   var searchEl=document.querySelector('#s-exp .search-box');
   var q=searchEl?searchEl.value.toLowerCase():'';
-  var data=DB.exp.filter(function(r){
-    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
-    (!fcat||r.category===fcat)&&
-    (!q||r.category.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
-  });
   // Currency-filtered summary (like loan summary)
   var expCurs=[...new Set(DB.exp.map(function(r){return r.currency;}))];
   var selExpCur=getCurSel('exp',expCurs);
+  var data=DB.exp.filter(function(r){
+    return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
+    (!fcat||r.category===fcat)&&
+    (!selExpCur||r.currency===selExpCur)&&
+    (!q||r.category.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
+  });
   var filteredExp=DB.exp.filter(function(r){return r.currency===selExpCur;});
   var totCur=filteredExp.reduce(function(s,r){return s+r.amount;},0);
   var byCat2={};
@@ -2569,7 +2675,7 @@ function loadProfile(){
 }
 
 document.getElementById('dt').textContent=new Date().toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'});
-fillYears(); initYrSearchable(); setDefaults(); fillCats(); syncYrs(); renderDash(); applySlideOpts(); loadProfile(); loadReminders(); checkReminders();
+fillYears(); initYrSearchable(); setDefaults(); fillCats(); fillAllCurSelects(); renderCurChips(); syncYrs(); renderDash(); applySlideOpts(); loadProfile(); loadReminders(); checkReminders();
 // Extra sync after DOM settles to fix yr-btn showing 2001
 setTimeout(function(){
   var cy=''+new Date().getFullYear();
@@ -2722,11 +2828,20 @@ function renderLoanPersonSummary(){
 </script>
 <div style="text-align:center;padding:16px;border-top:1px solid #e2e8f0;color:#6b7280;font-size:11px;">Developed by Hafez MD Nazim Uddin</div>
 
-<!-- Floating Telegram Button -->
-<a href="https://t.me/amarhisabapp" target="_blank" title="Contact on Telegram"
-  style="position:fixed;bottom:22px;right:18px;z-index:9999;width:52px;height:52px;border-radius:50%;background:#229ED9;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(34,158,217,0.5);text-decoration:none;transition:transform 0.2s;"
+<!-- Floating WhatsApp Button -->
+<a id="wa-float-btn" href="https://wa.me/966504618986" target="_blank" title="Contact on WhatsApp"
+  style="position:fixed;bottom:68px;right:14px;z-index:9999;width:38px;height:38px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(37,211,102,0.5);text-decoration:none;transition:transform 0.2s;"
   onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- Floating Telegram Button -->
+<a id="tg-float-btn" href="https://t.me/amarhisabapp?direct" target="_blank" title="Contact on Telegram"
+  style="position:fixed;bottom:18px;right:14px;z-index:9999;width:38px;height:38px;border-radius:50%;background:#229ED9;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(34,158,217,0.5);text-decoration:none;transition:transform 0.2s;"
+  onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
   </svg>
 </a>
