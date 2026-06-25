@@ -824,28 +824,12 @@ input:checked+.slider:before{transform:translateX(20px);}
 
 <script type="module">
 // ===== PREVIEW MODE TOGGLE =====
-// true করলে Login system bypass হয়ে সরাসরি app দেখাবে (preview/testing এর জন্য)
-// সব feature add শেষ হলে false করে দিন যাতে Firebase login আবার কাজ করে
 const PREVIEW_MODE = false;
 
 // ===== FIREBASE SETUP =====
-// Firebase disabled — Local Mode চলছে
-const initializeApp = () => ({});
-const getAuth = () => ({});
-const getFirestore = () => ({});
-const createUserWithEmailAndPassword = async () => {};
-const signInWithEmailAndPassword = async () => {};
-const onAuthStateChanged = () => {};
-const signOut = async () => {};
-const sendPasswordResetEmail = async () => {};
-const updatePassword = async () => {};
-const updateEmail = async () => {};
-const reauthenticateWithCredential = async () => {};
-const EmailAuthProvider = { credential: () => {} };
-const doc = () => ({});
-const setDoc = async () => {};
-const getDoc = async () => ({ exists: () => false, data: () => ({}) });
-const onSnapshot = () => {};
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgzHOjpDv8kqamRnAUULtoiji2tHfnKkI",
