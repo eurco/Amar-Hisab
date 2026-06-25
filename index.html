@@ -169,7 +169,7 @@ input:checked+.slider:before{transform:translateX(20px);}
 .auth-loading{text-align:center;padding:10px;color:#6b7280;font-size:13px;display:none;}
 #app-content{display:none;}
 .user-bar{background:#0d4a3a;color:white;padding:6px 16px;font-size:11px;display:flex;align-items:center;justify-content:space-between;}
-.sync-status{font-size:10px;opacity:0.75;}
+.sync-status{display:none;}
 .btn-logout{background:rgba(255,255,255,0.15);border:none;color:white;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;}
 #cur-search-results div:hover{background:var(--bg);}
 #s-dash .card select option{background:#1a3a5c;color:white;}
@@ -183,9 +183,18 @@ input:checked+.slider:before{transform:translateX(20px);}
 #s-dash .card[style*="1a3a5c"] .yr-opt{color:white;}
 #s-dash .card[style*="1a3a5c"] .yr-opt:hover,.yr-opt.active{background:var(--teal)!important;}
 
+/* TOAST */
+#toast-wrap{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+.toast{padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;color:#fff;opacity:0;transform:translateY(-10px);transition:all 0.3s ease;pointer-events:none;white-space:nowrap;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.toast-saved{background:#1e8449;}
+.toast.toast-deleted{background:#c0392b;}
+.toast.toast-updated{background:#048a81;}
+
 </style>
 </head>
 <body>
+<div id="toast-wrap"></div>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
@@ -313,7 +322,7 @@ input:checked+.slider:before{transform:translateX(20px);}
     <button class="btn-save" onclick="addSal()">✅ Save</button>
   </div>
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('sal')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderSal(this.value)">
     <div class="filter-row">
       <select id="sal-fyr" onchange="renderSal()"><option value="all">All Years</option></select>
@@ -347,7 +356,7 @@ input:checked+.slider:before{transform:translateX(20px);}
     <button class="btn-save" onclick="addTr()">✅ Save</button>
   </div>
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('tr')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderTr(this.value)">
     <div class="filter-row">
       <select id="tr-fyr" onchange="renderTr()"><option value="all">All Years</option></select>
@@ -377,7 +386,7 @@ input:checked+.slider:before{transform:translateX(20px);}
     <button class="btn-save" onclick="addSam()">✅ Save</button>
   </div>
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('sam')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <div class="filter-row">
       <select id="sam-fyr" onchange="renderSam()"><option value="all">All Years</option></select>
     </div>
@@ -410,7 +419,7 @@ input:checked+.slider:before{transform:translateX(20px);}
     <div class="stats-grid" id="inv-stats"></div>
   </div>
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('inv')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <div class="filter-row">
       <select id="inv-fyr" onchange="renderInv()"><option value="all">All Years</option></select>
     </div>
@@ -438,7 +447,7 @@ input:checked+.slider:before{transform:translateX(20px);}
     <button class="btn-save" onclick="addExp()">✅ Save</button>
   </div>
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('exp')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderExp()">
     <div class="filter-row">
       <select id="exp-fyr" onchange="renderExp()"><option value="all">All Years</option></select>
@@ -490,7 +499,7 @@ input:checked+.slider:before{transform:translateX(20px);}
   </div>
 
   <div class="card">
-    <div class="card-title">📋 History</div>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('loan')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderLoan(this.value)">
     <div class="filter-row">
       <select id="loan-filter" onchange="renderLoan()">
@@ -749,6 +758,18 @@ input:checked+.slider:before{transform:translateX(20px);}
             <input type="file" id="imp-file" accept=".json" onchange="importBk(this)" style="padding:6px;">
           </div>
         </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:10px;">⚠️ Danger Zone</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button onclick="clearTab('sal')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Salary Clear</button>
+            <button onclick="clearTab('tr')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Transfer Clear</button>
+            <button onclick="clearTab('sam')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Samity Clear</button>
+            <button onclick="clearTab('inv')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Investment Clear</button>
+            <button onclick="clearTab('exp')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Expense Clear</button>
+            <button onclick="clearTab('loan')" style="padding:8px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ Loan Clear</button>
+          </div>
+          <button onclick="clearAllData()" style="width:100%;margin-top:10px;padding:11px;background:#dc2626;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">🗑️ সব Data Clear (All)</button>
+        </div>
       </div>
     </div>
 
@@ -801,6 +822,32 @@ input:checked+.slider:before{transform:translateX(20px);}
 </div><!-- end app-content -->
 
 <input type="checkbox" id="dark-toggle" onchange="toggleDark()" style="display:none;">
+<!-- CLEAR CONFIRM MODAL -->
+<div id="clear-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border-radius:14px;padding:24px;max-width:300px;width:88%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
+    <div style="font-size:32px;margin-bottom:10px;">⚠️</div>
+    <div id="clear-modal-title" style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;"></div>
+    <div id="clear-modal-msg" style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="clearModalCancel()" style="padding:10px 20px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;">বাতিল</button>
+      <button onclick="clearModalConfirm()" style="padding:10px 20px;border-radius:8px;border:none;background:#dc2626;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">হ্যাঁ, মুছুন</button>
+    </div>
+  </div>
+</div>
+<!-- TOAST -->
+<div id="clear-toast" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a3a5c;color:white;padding:10px 20px;border-radius:20px;font-size:13px;z-index:99999;opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
+
+<!-- UNDO TOAST -->
+<div id="undo-toast" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;border-radius:10px;z-index:99999;opacity:0;transition:opacity 0.3s;width:240px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;gap:8px;">
+    <span id="undo-toast-msg" style="font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">মুছে গেছে</span>
+    <span id="undo-toast-timer" style="font-size:10px;color:#94a3b8;min-width:22px;text-align:right;">30s</span>
+    <button onclick="undoClear()" style="background:#3b82f6;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">↩ Undo</button>
+  </div>
+  <div style="height:2px;background:#334155;">
+    <div id="undo-toast-bar" style="height:100%;background:#3b82f6;width:100%;"></div>
+  </div>
+</div>
 <div id="del-confirm" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
   <div style="background:var(--card);border-radius:14px;padding:24px;max-width:280px;width:90%;margin:auto;margin-top:40vh;box-shadow:0 8px 32px rgba(0,0,0,0.2);text-align:center;">
     <div style="font-size:36px;margin-bottom:12px;">🗑️</div>
@@ -1210,9 +1257,9 @@ function loadDB(){
 }
 function saveDB(){
   try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}
-  // Sync to Firebase
   if(window.saveToFirebase) { clearTimeout(window._fbSaveTimer); window._fbSaveTimer=setTimeout(window.saveToFirebase,1500); }
 }
+
 function loadCats(){ try{var d=localStorage.getItem(CATS_KEY);return d?JSON.parse(d):[...DEFAULT_CATS];}catch(e){return [...DEFAULT_CATS];} }
 function saveCats(c){ try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catch(e){} }
 function loadCurs(){ try{var d=localStorage.getItem(CURS_KEY);return d?JSON.parse(d):[...DEFAULT_CURS];}catch(e){return [...DEFAULT_CURS];} }
@@ -1499,6 +1546,21 @@ function setLoanTab(t){
 }
 
 // ADD
+// TOAST NOTIFICATION
+function showToast(msg, type){
+  var wrap=document.getElementById('toast-wrap');
+  if(!wrap) return;
+  var t=document.createElement('div');
+  t.className='toast toast-'+(type||'saved');
+  t.textContent=msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(function(){t.classList.add('show');});
+  setTimeout(function(){
+    t.classList.remove('show');
+    setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},400);
+  },2000);
+}
+
 function addSal(){
   var yr=document.getElementById('sal-yr').value, mo=document.getElementById('sal-mo').value;
   var exp=parseFloat(document.getElementById('sal-exp').value)||0, rec=parseFloat(document.getElementById('sal-rec').value)||0;
@@ -1507,7 +1569,7 @@ function addSal(){
   DB.sal.unshift({year:yr,month:mo,expected:exp,received:rec,currency:cur,date:dt,notes:nt});
   saveDB();syncYrs();renderSal();
   document.getElementById('sal-exp').value='';document.getElementById('sal-rec').value='';document.getElementById('sal-nt').value='';
-  alert(T('saved'));
+  showToast('✅ Saved!','saved');
 }
 
 function addTr(){
@@ -1518,7 +1580,7 @@ function addTr(){
   DB.tr.unshift({year:yr,month:mo,date:dt,method:mth,currency:cur,amount:amt,notes:nt});
   saveDB();syncYrs();renderTr();
   document.getElementById('tr-amt').value='';document.getElementById('tr-nt').value='';
-  alert(T('saved'));
+  showToast('✅ Saved!','saved');
 }
 
 function addSam(){
@@ -1526,7 +1588,7 @@ function addSam(){
   var cur=document.getElementById('sam-cur').value, amt=parseFloat(document.getElementById('sam-amt').value)||5000;
   var dt=document.getElementById('sam-dt').value;
   DB.sam.unshift({year:yr,month:mo,currency:cur,amount:amt,date:dt});
-  saveDB();syncYrs();renderSam();alert(T('saved'));
+  saveDB();syncYrs();renderSam();showToast('✅ Saved!','saved');
 }
 
 function addInv(){
@@ -1537,7 +1599,7 @@ function addInv(){
   DB.inv.unshift({year:yr,month:mo,currency:cur,amount:amt,date:dt,notes:nt});
   saveDB();syncYrs();renderInv();
   document.getElementById('inv-amt').value='';document.getElementById('inv-nt').value='';
-  alert(T('saved'));
+  showToast('✅ Saved!','saved');
 }
 
 var MOS_ARR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1558,7 +1620,7 @@ function addExp(){
   saveDB();syncYrs();renderExp();
   document.getElementById('exp-amt').value='';
   document.getElementById('exp-nt').value='';
-  alert(T('saved'));
+  showToast('✅ Saved!','saved');
 }
 
 function addLoan(){
@@ -1572,7 +1634,7 @@ function addLoan(){
   saveDB();syncYrs();
   renderLoan();renderLoanSummary();renderLoanPersons();
   document.getElementById('loan-person').value='';document.getElementById('loan-amt').value='';document.getElementById('loan-nt').value='';
-  alert(T('saved'));
+  showToast('✅ Saved!','saved');
 }
 
 // DELETE
@@ -1595,6 +1657,7 @@ function delConfirm(){
   if(_delType==='inv')renderInv();
   if(_delType==='exp')renderExp();
   if(_delType==='loan'){renderLoan();renderLoanSummary();renderLoanPersons();}
+  showToast('🗑️ Deleted!','deleted');
   _delType=null; _delIdx=null;
 }
 function delCancel(){
@@ -1694,7 +1757,7 @@ function saveEdit(type,idx){
     r.notes=document.getElementById('e-nt').value;
     saveDB();closeModal();renderLoan();renderLoanSummary();renderLoanPersons();
   }
-  alert(T('updated'));
+  showToast('✅ Updated!','updated');
 }
 
 function closeModal(){ document.getElementById('modal').style.display='none'; }
@@ -2656,8 +2719,120 @@ function dlPDF(){
 }
 
 // BACKUP
+// CLEAR DATA
+var TAB_NAMES = {sal:'Salary',tr:'Transfer',sam:'Samity',inv:'Investment',exp:'Expense',loan:'Loan'};
+var _clearPending = null;
+var _undoData = null;
+var _undoTab = null;
+var _undoTimer = null;
+
+function clearTab(tab){
+  var name = TAB_NAMES[tab]||tab;
+  _clearPending = function(){
+    _undoData = JSON.parse(JSON.stringify(DB[tab]));
+    _undoTab = tab;
+    DB[tab]=[];
+    saveDB();
+    if(tab==='sal'){renderSal();if(typeof renderDash==='function')renderDash();}
+    else if(tab==='tr'){renderTr();if(typeof renderDash==='function')renderDash();}
+    else if(tab==='sam'){renderSam();if(typeof renderDash==='function')renderDash();}
+    else if(tab==='inv'){renderInv();if(typeof renderDash==='function')renderDash();}
+    else if(tab==='exp'){renderExp();if(typeof renderDash==='function')renderDash();}
+    else if(tab==='loan'){renderLoan();renderLoanSummary();renderLoanPersons();if(typeof renderDash==='function')renderDash();}
+    showUndoToast(name+' মুছে গেছে', 30);
+  };
+  showClearModal('🗑️ '+name+' Clear করবেন?', name+' এর সব data মুছে যাবে।');
+}
+
+function clearAllData(){
+  _clearPending = function(){
+    _undoData = JSON.parse(JSON.stringify(DB));
+    _undoTab = 'all';
+    DB={sal:[],tr:[],sam:[],inv:[],exp:[],loan:[]};
+    saveDB();
+    renderSal();renderTr();renderSam();renderInv();renderExp();
+    renderLoan();renderLoanSummary();renderLoanPersons();
+    if(typeof renderDash==='function') renderDash();
+    showUndoToast('সব data মুছে গেছে', 30);
+  };
+  showClearModal('🗑️ সব Data Clear করবেন?', 'Salary, Transfer, Samity, Investment, Expense, Loan — সব মুছে যাবে!');
+}
+
+function undoClear(){
+  if(!_undoData) return;
+  clearTimeout(_undoTimer);
+  if(_undoTab==='all'){
+    DB = _undoData;
+  } else {
+    DB[_undoTab] = _undoData;
+  }
+  saveDB();
+  renderSal();renderTr();renderSam();renderInv();renderExp();
+  renderLoan();renderLoanSummary();renderLoanPersons();
+  if(typeof renderDash==='function') renderDash();
+  _undoData=null; _undoTab=null;
+  hideUndoToast();
+  showClearToast('↩️ Undo সফল হয়েছে!');
+}
+
+function showClearModal(title, msg){
+  document.getElementById('clear-modal-title').textContent = title;
+  document.getElementById('clear-modal-msg').textContent = msg;
+  document.getElementById('clear-modal').style.display = 'flex';
+}
+function clearModalConfirm(){
+  document.getElementById('clear-modal').style.display = 'none';
+  if(_clearPending){ _clearPending(); _clearPending=null; }
+}
+function clearModalCancel(){
+  document.getElementById('clear-modal').style.display = 'none';
+  _clearPending = null;
+}
+
+function showUndoToast(msg, seconds){
+  var t=document.getElementById('undo-toast');
+  var tMsg=document.getElementById('undo-toast-msg');
+  var tTimer=document.getElementById('undo-toast-timer');
+  var tBar=document.getElementById('undo-toast-bar');
+  if(!t) return;
+  tMsg.textContent = msg;
+  t.style.display='flex';
+  t.style.opacity='1';
+  clearTimeout(_undoTimer);
+  var remaining = seconds;
+  tTimer.textContent = remaining+'s';
+  tBar.style.transition='none';
+  tBar.style.width='100%';
+  setTimeout(function(){
+    tBar.style.transition='width '+seconds+'s linear';
+    tBar.style.width='0%';
+  },50);
+  var tick = setInterval(function(){
+    remaining--;
+    tTimer.textContent = remaining+'s';
+    if(remaining<=0){ clearInterval(tick); hideUndoToast(); _undoData=null; _undoTab=null; }
+  },1000);
+  _undoTimer = setTimeout(function(){
+    clearInterval(tick);
+    hideUndoToast();
+    _undoData=null; _undoTab=null;
+  }, seconds*1000);
+}
+
+function hideUndoToast(){
+  var t=document.getElementById('undo-toast');
+  if(t){ t.style.opacity='0'; setTimeout(function(){t.style.display='none';},300); }
+}
+
+function showClearToast(msg){
+  var t=document.getElementById('clear-toast');
+  if(!t) return;
+  t.textContent=msg; t.style.opacity='1';
+  setTimeout(function(){t.style.opacity='0';},2500);
+}
+
 function exportBk(){
-  var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='AmarHisab_Backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(url);alert('✅ Backup downloaded!');
+  var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='AmarHisab_Backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(url);showToast('✅ Backup downloaded!','saved');
 }
 
 function importBk(input){
@@ -2670,7 +2845,7 @@ function importBk(input){
         if(data.salary)data.sal=data.salary;if(data.transfer)data.tr=data.transfer;
         if(data.samity)data.sam=data.samity;if(data.investment)data.inv=data.investment;
         if(data.expense)data.exp=data.expense;if(!data.loan)data.loan=[];
-        DB=data;saveDB();syncYrs();renderDash();alert('✅ Restored!');
+        DB=data;saveDB();syncYrs();renderDash();showToast('✅ Restored!','saved');
       }else{alert('❌ Invalid file!');}
     }catch(e){alert('❌ Error!');}
   };
@@ -2701,7 +2876,7 @@ function saveReminders(){
     loan:parseInt(document.getElementById('rem-loan').value)||0
   };
   localStorage.setItem('amar_reminders', JSON.stringify(rem));
-  alert('✅ Reminders saved!');
+  showToast('✅ Reminders saved!','saved');
   checkReminders();
 }
 
@@ -2794,7 +2969,7 @@ function saveProfile(){
   updateProfileUI(profile);
   // Sync to Firebase
   if(window.saveProfileToFirebase) window.saveProfileToFirebase(profile);
-  alert('✅ Profile saved!');
+  showToast('✅ Profile saved!','saved');
 }
 
 function uploadProfilePic(input){
