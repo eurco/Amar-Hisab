@@ -153,6 +153,7 @@ input:checked+.slider:before{transform:translateX(20px);}
 
 /* AUTH SCREEN */
 #auth-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a3a5c,#048a81);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;}
+#app-content{display:none;}
 .auth-card{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.3);}
 .auth-logo{text-align:center;margin-bottom:20px;}
 .auth-logo-icon{font-size:48px;}
@@ -167,7 +168,6 @@ input:checked+.slider:before{transform:translateX(20px);}
 .auth-btn:hover{background:#036d66;}
 .auth-err{background:#fef2f2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:12px;display:none;}
 .auth-loading{text-align:center;padding:10px;color:#6b7280;font-size:13px;display:none;}
-#app-content{display:none;}
 .user-bar{background:#0d4a3a;color:white;padding:6px 16px;font-size:11px;display:flex;align-items:center;justify-content:space-between;}
 .sync-status{display:none;}
 .btn-logout{background:rgba(255,255,255,0.15);border:none;color:white;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;}
@@ -190,6 +190,25 @@ input:checked+.slider:before{transform:translateX(20px);}
 .toast.toast-saved{background:#1e8449;}
 .toast.toast-deleted{background:#c0392b;}
 .toast.toast-updated{background:#048a81;}
+
+/* CALENDAR PICKER */
+.cal-wrap{position:relative;display:flex;align-items:center;}
+.cal-wrap input{width:100%;padding:9px 36px 9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:14px;letter-spacing:1px;}
+.cal-icon{position:absolute;right:10px;background:none;color:var(--muted);border:none;padding:0;font-size:16px;cursor:pointer;line-height:1;}
+.cal-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:9999;background:var(--card);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.15);padding:14px;width:280px;display:none;}
+.cal-popup.open{display:block;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-title{font-size:14px;font-weight:700;color:var(--text);}
+.cal-nav{background:none;border:1.5px solid var(--border);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;color:var(--text);display:flex;align-items:center;justify-content:center;}
+.cal-nav:hover{background:var(--bg);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day-name{font-size:10px;font-weight:600;color:var(--muted);text-align:center;padding:4px 0;}
+.cal-day{font-size:12px;text-align:center;padding:6px 2px;border-radius:6px;cursor:pointer;color:var(--text);}
+.cal-day:hover{background:var(--bg);}
+.cal-day.today{font-weight:700;color:var(--teal);}
+.cal-day.selected{background:var(--teal)!important;color:white!important;font-weight:700;}
+.cal-day.empty{cursor:default;}
+.dark .cal-popup{background:#1e2d3d;border-color:#2d4a6a;}
 
 </style>
 </head>
@@ -311,19 +330,19 @@ input:checked+.slider:before{transform:translateX(20px);}
       <div class="form-group"><label>Month</label>
         <select id="sal-mo"><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
       </div>
-      <div class="form-group"><label>Expected</label><input type="number" id="sal-exp" placeholder="1700"></div>
-      <div class="form-group"><label>Received</label><input type="number" id="sal-rec" placeholder="1700"></div>
+      <div class="form-group"><label>Expected</label><input type="number" id="sal-exp" placeholder="0"></div>
+      <div class="form-group"><label>Received</label><input type="number" id="sal-rec" placeholder="0"></div>
       <div class="form-group"><label>Currency</label>
         <select id="sal-cur"><option value="SAR">SAR</option><option value="BDT">BDT</option><option value="USD">USD</option></select>
       </div>
-      <div class="form-group"><label>Date</label><input type="date" id="sal-dt"></div>
+      <div class="form-group"><label>Date</label><div id="dtp-sal-dt" class="dtp-wrap"></div><input type="hidden" id="sal-dt"></div>
       <div class="form-group full"><label>Notes</label><input type="text" id="sal-nt" placeholder="..."></div>
     </div>
     <button class="btn-save" onclick="addSal()">✅ Save</button>
   </div>
   <div class="card">
     <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('sal')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
-    <input class="search-box" placeholder="🔍 Search..." oninput="renderSal(this.value)">
+    <input class="search-box" placeholder="🔍 Search..." oninput="_pages.sal=1;renderSal(this.value)">
     <div class="filter-row">
       <select id="sal-fyr" onchange="renderSal()"><option value="all">All Years</option></select>
       <select id="sal-fmo" onchange="renderSal()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
@@ -343,21 +362,21 @@ input:checked+.slider:before{transform:translateX(20px);}
       <div class="form-group"><label>Month</label>
         <select id="tr-mo"><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
       </div>
-      <div class="form-group full"><label>Date</label><input type="date" id="tr-dt"></div>
+      <div class="form-group full"><label>Date</label><div id="dtp-tr-dt" class="dtp-wrap"></div><input type="hidden" id="tr-dt"></div>
       <div class="form-group"><label>Method</label>
         <select id="tr-mth"><option>bKash</option><option>Bank Transfer</option><option>Nagad</option><option>Rocket</option><option>Western Union</option></select>
       </div>
       <div class="form-group"><label>Currency</label>
         <select id="tr-cur"><option value="BDT">BDT</option><option value="SAR">SAR</option><option value="USD">USD</option></select>
       </div>
-      <div class="form-group full"><label>Amount</label><input type="number" id="tr-amt" placeholder="10000"></div>
+      <div class="form-group full"><label>Amount</label><input type="number" id="tr-amt" placeholder="0"></div>
       <div class="form-group full"><label>Notes</label><input type="text" id="tr-nt" placeholder="..."></div>
     </div>
     <button class="btn-save" onclick="addTr()">✅ Save</button>
   </div>
   <div class="card">
     <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('tr')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
-    <input class="search-box" placeholder="🔍 Search..." oninput="renderTr(this.value)">
+    <input class="search-box" placeholder="🔍 Search..." oninput="_pages.tr=1;renderTr(this.value)">
     <div class="filter-row">
       <select id="tr-fyr" onchange="renderTr()"><option value="all">All Years</option></select>
       <select id="tr-fmo" onchange="renderTr()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
@@ -380,8 +399,8 @@ input:checked+.slider:before{transform:translateX(20px);}
       <div class="form-group"><label>Currency</label>
         <select id="sam-cur"><option value="BDT">BDT</option><option value="SAR">SAR</option><option value="USD">USD</option></select>
       </div>
-      <div class="form-group"><label>Amount</label><input type="number" id="sam-amt" value="5000"></div>
-      <div class="form-group full"><label>Date</label><input type="date" id="sam-dt"></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="sam-amt" placeholder="0"></div>
+      <div class="form-group full"><label>Date</label><div id="dtp-sam-dt" class="dtp-wrap"></div><input type="hidden" id="sam-dt"></div>
     </div>
     <button class="btn-save" onclick="addSam()">✅ Save</button>
   </div>
@@ -408,8 +427,8 @@ input:checked+.slider:before{transform:translateX(20px);}
       <div class="form-group"><label>Currency</label>
         <select id="inv-cur"><option value="BDT">BDT</option><option value="SAR">SAR</option><option value="USD">USD</option></select>
       </div>
-      <div class="form-group"><label>Amount</label><input type="number" id="inv-amt" placeholder="5000"></div>
-      <div class="form-group full"><label>Date</label><input type="date" id="inv-dt"></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="inv-amt" placeholder="0"></div>
+      <div class="form-group full"><label>Date</label><div id="dtp-inv-dt" class="dtp-wrap"></div><input type="hidden" id="inv-dt"></div>
       <div class="form-group full"><label>Notes</label><input type="text" id="inv-nt" placeholder="..."></div>
     </div>
     <button class="btn-save" onclick="addInv()">✅ Save</button>
@@ -433,15 +452,28 @@ input:checked+.slider:before{transform:translateX(20px);}
   <div class="card">
     <div class="card-title">➕ Add Expense</div>
     <div class="form-grid">
-      <div class="form-group full"><label>Date</label><input type="date" id="exp-dt" onchange="autoFillExpYrMo()"></div>
-      <div class="form-group">
+      <div class="form-group full"><label>Date</label><div id="dtp-exp-dt" class="dtp-wrap"></div><input type="hidden" id="exp-dt"></div>
+      <div class="form-group full">
         <label>Category</label>
-        <select id="exp-cat" style="width:100%;"></select>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <select id="exp-cat" style="flex:1;" onchange="highlightCatChip(this.value)"></select>
+          <button onclick="toggleCatPanel()" id="cat-add-btn" title="Add / Manage categories" style="width:32px;height:32px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:20px;cursor:pointer;line-height:1;padding:0;flex-shrink:0;">+</button>
+        </div>
+        <!-- Category panel (hidden by default) -->
+        <div id="cat-panel" style="display:none;margin-top:8px;border:1.5px solid var(--teal);border-radius:10px;padding:10px;background:var(--bg);">
+          <!-- New category input -->
+          <div style="display:flex;gap:6px;margin-bottom:10px;">
+            <input type="text" id="new-cat-inp" placeholder="নতুন category নাম..." style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--card);color:var(--text);font-family:inherit;" onkeydown="if(event.key==='Enter')addCatInline()">
+            <button onclick="addCatInline()" style="padding:7px 14px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">✓</button>
+          </div>
+          <!-- Category chips -->
+          <div id="cat-chips-inline" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
       </div>
       <div class="form-group"><label>Currency</label>
         <select id="exp-cur"><option value="SAR">SAR</option><option value="BDT">BDT</option><option value="USD">USD</option></select>
       </div>
-      <div class="form-group full"><label>Amount</label><input type="number" id="exp-amt" placeholder="100"></div>
+      <div class="form-group full"><label>Amount</label><input type="number" id="exp-amt" placeholder="0"></div>
       <div class="form-group full"><label>Notes</label><input type="text" id="exp-nt" placeholder="..."></div>
     </div>
     <button class="btn-save" onclick="addExp()">✅ Save</button>
@@ -453,7 +485,7 @@ input:checked+.slider:before{transform:translateX(20px);}
       <select id="exp-fyr" onchange="renderExp()"><option value="all">All Years</option></select>
       <select id="exp-fmo" onchange="renderExp()"><option value="all">All Months</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
     </div>
-    <select id="exp-fcur" onchange="window._cs.exp=this.value;renderExp()" style="width:100%;margin-bottom:10px;"></select>
+    <div class="stats-grid" id="exp-stats" style="margin-bottom:10px;"></div>
     <div class="tbl-wrap" id="exp-tbl"></div>
   </div>
 </div>
@@ -474,8 +506,8 @@ input:checked+.slider:before{transform:translateX(20px);}
           <option value="SAR">SAR</option><option value="BDT">BDT</option><option value="USD">USD</option>
         </select>
       </div>
-      <div class="form-group"><label>Amount</label><input type="number" id="loan-amt" placeholder="1000"></div>
-      <div class="form-group full"><label>Date</label><input type="date" id="loan-dt"></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="loan-amt" placeholder="0"></div>
+      <div class="form-group full"><label>Date</label><div id="dtp-loan-dt" class="dtp-wrap"></div><input type="hidden" id="loan-dt"></div>
       <div class="form-group full"><label>Notes</label><input type="text" id="loan-nt" placeholder="..."></div>
     </div>
     <button class="btn-save" onclick="addLoan()">✅ Save</button>
@@ -494,12 +526,9 @@ input:checked+.slider:before{transform:translateX(20px);}
 
 
   <div class="card">
-    <div class="card-title" id="loan-person-card-title">👤 Person-wise Summary</div>
-    <div id="loan-persons"></div>
-  </div>
-
-  <div class="card">
     <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">📋 History <button onclick="clearTab('loan')" style="font-size:11px;padding:4px 10px;background:#fee2e2;color:#dc2626;border:1.5px solid #dc2626;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;">🗑️ Clear</button></div>
+    <!-- Quick Summary Bar -->
+    <div id="loan-history-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"></div>
     <input class="search-box" placeholder="🔍 Search..." oninput="renderLoan(this.value)">
     <div class="filter-row">
       <select id="loan-filter" onchange="renderLoan()">
@@ -679,20 +708,6 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
     </div>
 
-    <!-- 5. Expense Categories -->
-    <div class="acc-item">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span>📂 Expense Categories</span><span class="acc-arrow">▶</span>
-      </div>
-      <div class="acc-body">
-        <div id="cat-chips" style="margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="new-cat" placeholder="New category name...">
-          <button class="btn-add" onclick="addExpCatSet()">+ Add</button>
-        </div>
-      </div>
-    </div>
-
     <!-- 5b. Currency Management -->
     <div class="acc-item">
       <div class="acc-head" onclick="toggleAcc(this)">
@@ -788,6 +803,7 @@ input:checked+.slider:before{transform:translateX(20px);}
           <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;">Version 1.0</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Developed by Hafez MD Nazim Uddin</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;">Personal Finance Tracker</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;">📅 Last Updated: 3 July 2026</div>
         </div>
 
         <!-- Privacy Policy -->
@@ -859,8 +875,9 @@ input:checked+.slider:before{transform:translateX(20px);}
     </div>
   </div>
 </div>
-<div id="modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:999;padding:20px;overflow-y:auto;">
-  <div style="background:var(--card);border-radius:12px;padding:20px;max-width:500px;margin:40px auto;">
+<div id="modal" onclick="if(event.target===this)closeModal()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:999;">
+  <div id="modal-sheet" style="background:var(--card);border-radius:20px 20px 0 0;padding:20px;max-width:600px;margin:0 auto;position:absolute;left:0;right:0;bottom:0;max-height:85vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.25);transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:3px;margin:0 auto 14px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <h3 style="font-size:15px;font-weight:700;">✏️ Edit</h3>
       <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
@@ -1303,22 +1320,101 @@ function fillYears(){
 function fillCats(){
   var el=document.getElementById('exp-cat'); if(!el)return;
   var cats=loadCats();
-  // Add form: only settings categories
   var cur=el.value; el.innerHTML='';
   cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o);});
   if(cur&&el.querySelector('option[value="'+cur+'"]')) el.value=cur;
   renderCatChips();
+  showSelectedCat();
 }
 
 function renderCatChips(){
-  var el=document.getElementById('cat-chips'); if(!el)return;
+  var el=document.getElementById('cat-chips'); if(el){
+    var cats=loadCats();
+    el.innerHTML=cats.map(function(c,i){
+      return '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;margin:3px;">'+c+'<button onclick="delCat('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;">×</button></span>';
+    }).join('');
+  }
+  var el2=document.getElementById('cat-chips-inline'); if(!el2)return;
   var cats=loadCats();
-  el.innerHTML=cats.map(function(c,i){
-    return '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;margin:3px;">'+c+'<button onclick="delCat('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;">x</button></span>';
+  el2.innerHTML=cats.map(function(c,i){
+    return '<span data-cat="'+i+'" class="cat-chip" style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all 0.15s;">'
+      +'<span class="cat-chip-txt">'+c+'</span>'
+      +'<button class="cat-chip-del" data-idx="'+i+'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;line-height:1;padding:0 2px;" title="Delete">✕</button>'
+      +'</span>';
   }).join('');
+  // event delegation
+  el2.onclick=function(e){
+    var del=e.target.closest('.cat-chip-del');
+    if(del){ e.stopPropagation(); delCat(parseInt(del.getAttribute('data-idx'))); return; }
+    var chip=e.target.closest('.cat-chip');
+    if(chip){
+      var txt=chip.querySelector('.cat-chip-txt');
+      if(txt) selectCatChip(txt.textContent);
+    }
+  };
+  var sel=document.getElementById('exp-cat');
+  if(sel) highlightCatChip(sel.value);
 }
 
-function delCat(i){ var cats=loadCats(); cats.splice(i,1); saveCats(cats); fillCats(); }
+function selectCatChip(name){
+  var sel=document.getElementById('exp-cat');
+  if(sel) sel.value=name;
+  highlightCatChip(name);
+}
+
+function highlightCatChip(name){
+  var chips=document.querySelectorAll('#cat-chips-inline span');
+  chips.forEach(function(chip){
+    var txt=chip.querySelector('span');
+    if(txt&&txt.textContent===name){
+      chip.style.background='var(--teal)';
+      chip.style.color='white';
+      chip.style.borderColor='var(--teal)';
+    } else {
+      chip.style.background='var(--bg)';
+      chip.style.color='var(--text)';
+      chip.style.borderColor='var(--border)';
+    }
+  });
+}
+
+function toggleCatPanel(){
+  var panel=document.getElementById('cat-panel');
+  var btn=document.getElementById('cat-add-btn');
+  if(!panel)return;
+  var open=panel.style.display==='block';
+  panel.style.display=open?'none':'block';
+  btn.textContent=open?'+':'✕';
+  btn.style.background=open?'var(--teal)':'var(--red)';
+  if(!open){
+    renderCatChips();
+    setTimeout(function(){var inp=document.getElementById('new-cat-inp');if(inp)inp.focus();},50);
+  }
+}
+
+function addCatInline(){
+  var inp=document.getElementById('new-cat-inp');
+  var name=(inp?inp.value:'').trim();
+  if(!name){inp&&inp.focus();return;}
+  var cats=loadCats();
+  if(cats.indexOf(name)>-1){alert('Already exists!');return;}
+  cats.push(name); saveCats(cats); fillCats();
+  var sel=document.getElementById('exp-cat');
+  if(sel) sel.value=name;
+  highlightCatChip(name);
+  if(inp) inp.value='';
+  inp&&inp.focus();
+}
+
+function delCat(i){
+  var cats=loadCats();
+  cats.splice(i,1);
+  saveCats(cats);
+  fillCats();
+  // re-render chips if panel is open
+  var panel=document.getElementById('cat-panel');
+  if(panel&&panel.style.display==='block') renderCatChips();
+}
 
 // CURRENCY MANAGEMENT
 function renderCurChips(){
@@ -1393,6 +1489,98 @@ function addExpCat(){
   document.getElementById('exp-cat').value=name.trim();
 }
 
+function showSelectedCat(){
+  var sel=document.getElementById('exp-cat');
+  var chip=document.getElementById('selected-cat-chip');
+  if(!sel||!chip) return;
+  var name=sel.value;
+  if(!name){chip.style.display='none';return;}
+  chip.style.display='block';
+  chip.innerHTML='<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:20px;font-size:12px;color:#dc2626;font-weight:600;">'
+    +name
+    +'<button onclick="deleteCatInline()" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:14px;line-height:1;padding:0;font-weight:700;">✕</button>'
+    +'</span>';
+}
+
+function deleteCatInline(){
+  var sel=document.getElementById('exp-cat');
+  var name=sel?sel.value:'';
+  if(!name){return;}
+  if(!confirm('"'+name+'" মুছবেন?')) return;
+  var cats=loadCats();
+  cats=cats.filter(function(c){return c!==name;});
+  saveCats(cats);
+  fillCats();
+  document.getElementById('selected-cat-chip').style.display='none';
+  showToast('🗑️ Category removed!','saved');
+}
+
+function openCatManager(){
+  renderCatManagerList();
+  document.getElementById('cat-manager-modal').style.display='block';
+}
+function closeCatManager(){
+  document.getElementById('cat-manager-modal').style.display='none';
+}
+function renderCatManagerList(){
+  var cats=loadCats();
+  var el=document.getElementById('cat-manager-list');
+  if(!el) return;
+  if(!cats.length){el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:13px;padding:10px;">No categories yet.</div>';return;}
+  el.innerHTML=cats.map(function(c,i){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;">'
+      +'<span style="font-size:13px;font-weight:500;">'+c+'</span>'
+      +'<button onclick="deleteCatByIndex('+i+')" style="background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;">✕ Remove</button>'
+      +'</div>';
+  }).join('');
+}
+function deleteCatByIndex(i){
+  var cats=loadCats();
+  var name=cats[i];
+  if(!confirm('"'+name+'" মুছবেন?')) return;
+  cats.splice(i,1);
+  saveCats(cats);
+  fillCats();
+  renderCatManagerList();
+  showToast('🗑️ Removed!','saved');
+}
+function addCatFromManager(){
+  var inp=document.getElementById('cat-manager-inp');
+  var name=inp.value.trim();
+  if(!name){alert('Category name লিখুন!');return;}
+  var cats=loadCats();
+  if(cats.some(function(c){return c.toLowerCase()===name.toLowerCase();})){alert('Already exists!');return;}
+  cats.push(name); saveCats(cats); fillCats();
+  inp.value='';
+  renderCatManagerList();
+  // auto select new category
+  var sel=document.getElementById('exp-cat');
+  if(sel) sel.value=name;
+  showToast('✅ Added!','saved');
+}
+
+function showAddCatInline(){
+  var el=document.getElementById('add-cat-inline');
+  if(!el) return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display==='block') document.getElementById('new-cat-inp').focus();
+}
+
+function addCatInline(){
+  var inp=document.getElementById('new-cat-inp');
+  var name=inp.value.trim();
+  if(!name){alert(T('enterName'));return;}
+  var cats=loadCats();
+  if(cats.some(function(c){return c.toLowerCase()===name.toLowerCase();})){alert(T('catExists'));return;}
+  cats.push(name); saveCats(cats); fillCats();
+  inp.value='';
+  document.getElementById('add-cat-inline').style.display='none';
+  // auto select newly added category
+  var sel=document.getElementById('exp-cat');
+  if(sel) sel.value=name;
+  showToast('✅ Category added!','saved');
+}
+
 function addExpCatSet(){
   var el=document.getElementById('new-cat'); var name=el.value.trim();
   if(!name){alert(T('enterName'));return;}
@@ -1401,24 +1589,156 @@ function addExpCatSet(){
 }
 
 function today(){ return new Date().toISOString().split('T')[0]; }
+
+function initDatePicker(id, val){
+  var wrap=document.getElementById('dtp-'+id); if(!wrap)return;
+  var now=new Date();
+  var display='';
+  if(val){
+    var p=val.split('-');
+    if(p.length===3) display=p[2]+'/'+p[1]+'/'+p[0];
+  } else {
+    display=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+  }
+  var hidden=document.getElementById(id);
+  if(hidden) hidden.value=val||(now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0'));
+  wrap.innerHTML=
+    '<div class="cal-wrap">'
+    +'<input type="text" id="dtp-inp-'+id+'" value="'+display+'" placeholder="dd/mm/yyyy" maxlength="10"'
+    +' oninput="dptSync(\''+id+'\')"'
+    +'>'
+    +'<button type="button" class="cal-icon" onclick="toggleCal(\''+id+'\')">📅</button>'
+    +'<div class="cal-popup" id="cal-'+id+'"></div>'
+    +'</div>';
+  buildCal(id, hidden?hidden.value:'');
+}
+
+function dptSync(id){
+  var inp=document.getElementById('dtp-inp-'+id); if(!inp)return;
+  var v=inp.value.replace(/[^0-9\/]/g,'');
+  // Auto-insert slashes
+  if(v.length===2&&inp._prev&&inp._prev.length===1) v=v+'/';
+  else if(v.length===5&&inp._prev&&inp._prev.length===4) v=v+'/';
+  inp._prev=v;
+  inp.value=v;
+  // Parse dd/mm/yyyy → yyyy-mm-dd for hidden field
+  var parts=v.split('/');
+  var hidden=document.getElementById(id);
+  if(hidden&&parts.length===3&&parts[2].length===4){
+    hidden.value=parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0');
+    buildCal(id, hidden.value);
+  }
+}
+
+function setDatePicker(id, val){
+  initDatePicker(id, val);
+}
+
+// ===== CALENDAR =====
+var _calState={};
+
+function toggleCal(id){
+  // Close all other calendars
+  document.querySelectorAll('.cal-popup.open').forEach(function(p){
+    if(p.id!=='cal-'+id) p.classList.remove('open');
+  });
+  var pop=document.getElementById('cal-'+id);
+  if(pop) pop.classList.toggle('open');
+}
+
+// Close calendar on outside click
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.cal-wrap')) {
+    document.querySelectorAll('.cal-popup.open').forEach(function(p){p.classList.remove('open');});
+  }
+});
+
+function buildCal(id, selectedVal){
+  var pop=document.getElementById('cal-'+id); if(!pop) return;
+  var now=new Date();
+  var state=_calState[id];
+  if(!state){
+    var sy=now.getFullYear(), sm=now.getMonth();
+    if(selectedVal){ var sp=selectedVal.split('-'); sy=parseInt(sp[0])||sy; sm=(parseInt(sp[1])-1)||sm; }
+    state={year:sy, month:sm};
+    _calState[id]=state;
+  }
+  var selDate=selectedVal||'';
+  var yr=state.year, mo=state.month;
+  var MON_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var firstDay=new Date(yr,mo,1).getDay(); // 0=Sun
+  firstDay=(firstDay+6)%7; // Make Monday=0
+  var daysInMonth=new Date(yr,mo+1,0).getDate();
+  var todayStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+
+  var h='<div class="cal-header">'
+    +'<button class="cal-nav" onclick="calNav(\''+id+'\',-1)">◀</button>'
+    +'<div class="cal-title">'+MON_NAMES[mo]+' '+yr+'</div>'
+    +'<button class="cal-nav" onclick="calNav(\''+id+'\',1)">▶</button>'
+    +'</div>'
+    +'<div class="cal-grid">';
+
+  // Day names
+  ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(function(d){
+    h+='<div class="cal-day-name">'+d+'</div>';
+  });
+
+  // Empty cells before first day
+  for(var i=0;i<firstDay;i++) h+='<div class="cal-day empty"></div>';
+
+  // Days
+  for(var d=1;d<=daysInMonth;d++){
+    var ds=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var cls='cal-day';
+    if(ds===todayStr) cls+=' today';
+    if(ds===selDate) cls+=' selected';
+    h+='<div class="'+cls+'" onclick="calSelect(\''+id+'\',\''+ds+'\')">'+d+'</div>';
+  }
+
+  h+='</div>';
+  pop.innerHTML=h;
+}
+
+function calNav(id, dir){
+  if(!_calState[id]) _calState[id]={year:new Date().getFullYear(),month:new Date().getMonth()};
+  _calState[id].month+=dir;
+  if(_calState[id].month>11){_calState[id].month=0;_calState[id].year++;}
+  if(_calState[id].month<0){_calState[id].month=11;_calState[id].year--;}
+  var hidden=document.getElementById(id);
+  buildCal(id, hidden?hidden.value:'');
+}
+
+function calSelect(id, dateStr){
+  // dateStr = yyyy-mm-dd
+  var hidden=document.getElementById(id);
+  if(hidden) hidden.value=dateStr;
+  // Update text input to dd/mm/yyyy
+  var p=dateStr.split('-');
+  var display=p[2]+'/'+p[1]+'/'+p[0];
+  var inp=document.getElementById('dtp-inp-'+id);
+  if(inp){ inp.value=display; inp._prev=display; }
+  // Rebuild calendar with selected date
+  buildCal(id, dateStr);
+  // Close popup
+  var pop=document.getElementById('cal-'+id);
+  if(pop) setTimeout(function(){pop.classList.remove('open');},150);
+}
 function setDefaults(){
   var now=new Date();
   var cy=''+now.getFullYear();
   var cm=MOS[now.getMonth()];
-  var cd=today();
-  // Date fields
+  // Init custom date pickers with today
   ['sal-dt','tr-dt','sam-dt','inv-dt','exp-dt','loan-dt'].forEach(function(id){
-    var el=document.getElementById(id);if(el&&!el.value)el.value=cd;
+    initDatePicker(id, null);
   });
   // Month fields
   ['sal-mo','tr-mo','sam-mo','inv-mo'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value=cm;
   });
-  // Year fields — set current year and update button text if custom dropdown
+  // Year fields
   ['sal-yr','tr-yr','sam-yr','inv-yr'].forEach(function(id){
     var el=document.getElementById(id);if(!el)return;
     if(!el.value) el.value=cy;
-    // update custom yr-btn text if exists
     var wrap=el.closest?el.closest('.yr-wrap'):el.parentNode;
     if(wrap){
       var btn=wrap.querySelector('.yr-btn');
@@ -1585,10 +1905,13 @@ function addTr(){
 
 function addSam(){
   var yr=document.getElementById('sam-yr').value, mo=document.getElementById('sam-mo').value;
-  var cur=document.getElementById('sam-cur').value, amt=parseFloat(document.getElementById('sam-amt').value)||5000;
+  var cur=document.getElementById('sam-cur').value, amt=parseFloat(document.getElementById('sam-amt').value)||0;
   var dt=document.getElementById('sam-dt').value;
+  if(!amt){alert(T('enterAmount'));return;}
   DB.sam.unshift({year:yr,month:mo,currency:cur,amount:amt,date:dt});
-  saveDB();syncYrs();renderSam();showToast('✅ Saved!','saved');
+  saveDB();syncYrs();renderSam();
+  document.getElementById('sam-amt').value='';
+  showToast('✅ Saved!','saved');
 }
 
 function addInv(){
@@ -1624,15 +1947,90 @@ function addExp(){
 }
 
 function addLoan(){
-  var person=document.getElementById('loan-person').value.trim();
+  var person=document.getElementById('loan-person').value.trim().replace(/\s+/g,' ');
   var cur=getLoanCur(), amt=parseFloat(document.getElementById('loan-amt').value)||0;
   var dt=document.getElementById('loan-dt').value, nt=document.getElementById('loan-nt').value;
   if(!person){alert(T('enterName'));return;}
   if(!cur){alert(T('enterCurrency'));return;}
   if(!amt){alert(T('enterAmount'));return;}
+
+  var personKey=person.toLowerCase();
+
+  if(LOAN_TYPE==='lend'){
+    // "আমি দিলাম" — check করি এই লোকের কাছে আমার owe আছে কিনা
+    var oweEntries=DB.loan.filter(function(r){
+      return r.type==='owe'&&r.currency===cur&&r.person.trim().toLowerCase()===personKey&&(r.amount-(r.paid||0))>0;
+    });
+    if(oweEntries.length>0){
+      // ওই লোকের কাছে আমার দেনা আছে — টাকা কাটো
+      var remaining=amt;
+      for(var i=0;i<oweEntries.length&&remaining>0;i++){
+        var entry=oweEntries[i];
+        var entryRem=entry.amount-(entry.paid||0);
+        var realIdx=DB.loan.indexOf(entry);
+        if(entryRem<=remaining){
+          // এই entry পুরো শেষ
+          DB.loan[realIdx].paid=DB.loan[realIdx].amount;
+          remaining-=entryRem;
+        } else {
+          // এই entry partially কাটা
+          DB.loan[realIdx].paid=(DB.loan[realIdx].paid||0)+remaining;
+          remaining=0;
+        }
+      }
+      if(remaining>0){
+        // বাকি টাকা — এখন সে আমার কাছে দেনাদার (reverse lend)
+        DB.loan.unshift({type:'lend',person:person,currency:cur,amount:remaining,paid:0,date:dt,notes:nt||'অতিরিক্ত পরিশোধের পর বাকি'});
+        showToast('✅ দেনা শেষ! বাকি '+N(remaining)+' '+cur+' এখন '+person+' আপনাকে দেবে।','saved');
+      } else {
+        showToast('✅ '+person+' এর দেনা কাটা হয়েছে!','saved');
+      }
+      saveDB();syncYrs();renderLoan();renderLoanSummary();renderLoanPersons();
+      if(typeof renderDash==='function') renderDash();
+      document.getElementById('loan-person').value='';document.getElementById('loan-amt').value='';document.getElementById('loan-nt').value='';
+      return;
+    }
+  }
+
+  if(LOAN_TYPE==='owe'){
+    // "আমি নিলাম" — check করি এই লোককে আমি আগে টাকা দিয়েছি কিনা (lend)
+    var lendEntries=DB.loan.filter(function(r){
+      return r.type==='lend'&&r.currency===cur&&r.person.trim().toLowerCase()===personKey&&(r.amount-(r.paid||0))>0;
+    });
+    if(lendEntries.length>0){
+      // এই লোক আমার কাছ থেকে আগে টাকা নিয়েছিল — সেটা কাটো
+      var remaining2=amt;
+      for(var j=0;j<lendEntries.length&&remaining2>0;j++){
+        var entry2=lendEntries[j];
+        var entry2Rem=entry2.amount-(entry2.paid||0);
+        var realIdx2=DB.loan.indexOf(entry2);
+        if(entry2Rem<=remaining2){
+          DB.loan[realIdx2].paid=DB.loan[realIdx2].amount;
+          remaining2-=entry2Rem;
+        } else {
+          DB.loan[realIdx2].paid=(DB.loan[realIdx2].paid||0)+remaining2;
+          remaining2=0;
+        }
+      }
+      if(remaining2>0){
+        // বাকি টাকা — এখনও আমি নিচ্ছি (new owe)
+        DB.loan.unshift({type:'owe',person:person,currency:cur,amount:remaining2,paid:0,date:dt,notes:nt||'পূর্বের পাওনা শেষ, নতুন ঋণ'});
+        showToast('✅ আগের পাওনা শেষ! বাকি '+N(remaining2)+' '+cur+' নতুন ঋণ হিসেবে যোগ হয়েছে।','saved');
+      } else {
+        showToast('✅ '+person+' এর পাওনা কাটা হয়েছে!','saved');
+      }
+      saveDB();syncYrs();renderLoan();renderLoanSummary();renderLoanPersons();
+      if(typeof renderDash==='function') renderDash();
+      document.getElementById('loan-person').value='';document.getElementById('loan-amt').value='';document.getElementById('loan-nt').value='';
+      return;
+    }
+  }
+
+  // কোনো পুরনো entry নেই — নতুন entry তৈরি করো (আগের মতো)
   DB.loan.unshift({type:LOAN_TYPE,person:person,currency:cur,amount:amt,paid:0,date:dt,notes:nt});
   saveDB();syncYrs();
   renderLoan();renderLoanSummary();renderLoanPersons();
+  if(typeof renderDash==='function') renderDash();
   document.getElementById('loan-person').value='';document.getElementById('loan-amt').value='';document.getElementById('loan-nt').value='';
   showToast('✅ Saved!','saved');
 }
@@ -1669,38 +2067,39 @@ function delCancel(){
 function openEdit(type,idx){
   var r=DB[type][idx];
   var body='';
+  var dtHtml='<div class="form-group"><label>Date</label><div id="dtp-e-dt" class="dtp-wrap"></div><input type="hidden" id="e-dt"></div>';
   if(type==='sal'){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Expected</label><input type="number" id="e-exp" value="'+r.expected+'"></div>'
       +'<div class="form-group"><label>Received</label><input type="number" id="e-rec" value="'+r.received+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'<div class="form-group"><label>Notes</label><input type="text" id="e-nt" value="'+(r.notes||'')+'"></div>'
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'sal\','+idx+')">✅ Save</button>';
   } else if(type==='tr'){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Amount</label><input type="number" id="e-amt" value="'+r.amount+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'<div class="form-group"><label>Notes</label><input type="text" id="e-nt" value="'+(r.notes||'')+'"></div>'
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'tr\','+idx+')">✅ Save</button>';
   } else if(type==='sam'){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Amount</label><input type="number" id="e-amt" value="'+r.amount+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'sam\','+idx+')">✅ Save</button>';
   } else if(type==='inv'){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Amount</label><input type="number" id="e-amt" value="'+r.amount+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'<div class="form-group"><label>Notes</label><input type="text" id="e-nt" value="'+(r.notes||'')+'"></div>'
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'inv\','+idx+')">✅ Save</button>';
   } else if(type==='exp'){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Amount</label><input type="number" id="e-amt" value="'+r.amount+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'<div class="form-group"><label>Notes</label><input type="text" id="e-nt" value="'+(r.notes||'')+'"></div>'
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'exp\','+idx+')">✅ Save</button>';
@@ -1708,13 +2107,21 @@ function openEdit(type,idx){
     body='<div class="form-col">'
       +'<div class="form-group"><label>Amount</label><input type="number" id="e-amt" value="'+r.amount+'"></div>'
       +'<div class="form-group"><label>Paid Back</label><input type="number" id="e-paid" value="'+(r.paid||0)+'"></div>'
-      +'<div class="form-group"><label>Date</label><input type="date" id="e-dt" value="'+(r.date||'')+'"></div>'
+      +dtHtml
       +'<div class="form-group"><label>Notes</label><input type="text" id="e-nt" value="'+(r.notes||'')+'"></div>'
       +'</div>'
       +'<button class="btn-save" style="margin-top:10px;" onclick="saveEdit(\'loan\','+idx+')">✅ Save</button>';
   }
   document.getElementById('modal-body').innerHTML=body;
-  document.getElementById('modal').style.display='block';
+  // init date picker with existing value
+  initDatePicker('e-dt', r.date||null);
+  var modalEl=document.getElementById('modal');
+  modalEl.style.display='block';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.getElementById('modal-sheet').style.transform='translateY(0)';
+    });
+  });
 }
 
 function saveEdit(type,idx){
@@ -1760,7 +2167,77 @@ function saveEdit(type,idx){
   showToast('✅ Updated!','updated');
 }
 
-function closeModal(){ document.getElementById('modal').style.display='none'; }
+function closeModal(){
+  var sheet=document.getElementById('modal-sheet');
+  sheet.style.transform='translateY(100%)';
+  setTimeout(function(){ document.getElementById('modal').style.display='none'; },300);
+}
+
+// ============ PAGINATION ============
+var PAGE_SIZE=10;
+var _pages={sal:1,tr:1,sam:1,inv:1,exp:1,loan:1};
+
+function buildPagination(type, total, current){
+  var totalPages=Math.ceil(total/PAGE_SIZE);
+  if(totalPages<=1) return '';
+  var html='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card);border-radius:12px;border:1.5px solid var(--border);margin-top:8px;">'
+    +'<div style="font-size:12px;color:var(--muted);">'+total+' records • Page '+current+' of '+totalPages+'</div>'
+    +'<div style="display:flex;align-items:center;gap:4px;">';
+
+  // Prev button
+  html+='<button onclick="changePage(\''+type+'\','+(current-1)+')" '+(current===1?'disabled':'')+' style="min-width:32px;height:32px;padding:0 6px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:13px;cursor:pointer;'+(current===1?'opacity:0.3;cursor:not-allowed;':'')+'">◀</button>';
+
+  // Page numbers with smart ellipsis
+  var pages=getPageNumbers(current, totalPages);
+  pages.forEach(function(p){
+    if(p==='...'){
+      html+='<span style="min-width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">...</span>';
+    } else {
+      html+='<button onclick="changePage(\''+type+'\','+p+')" style="min-width:32px;height:32px;padding:0 6px;border:1.5px solid '+(p===current?'#1a3a5c':'var(--border)')+';border-radius:8px;background:'+(p===current?'#1a3a5c':'var(--card)')+';color:'+(p===current?'white':'var(--text)')+';font-size:13px;cursor:pointer;">'+p+'</button>';
+    }
+  });
+
+  // Next button
+  html+='<button onclick="changePage(\''+type+'\','+(current+1)+')" '+(current===totalPages?'disabled':'')+' style="min-width:32px;height:32px;padding:0 6px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:13px;cursor:pointer;'+(current===totalPages?'opacity:0.3;cursor:not-allowed;':'')+'">▶</button>';
+
+  html+='</div></div>';
+  return html;
+}
+
+function getPageNumbers(current, total){
+  if(total<=7) return Array.from({length:total},function(_,i){return i+1;});
+  var pages=[];
+  if(current<=4){
+    pages=[1,2,3,4,5,'...',total];
+  } else if(current>=total-3){
+    pages=[1,'...',total-4,total-3,total-2,total-1,total];
+  } else {
+    pages=[1,'...',current-1,current,current+1,'...',total];
+  }
+  return pages;
+}
+
+function changePage(type, page){
+  _pages[type]=page;
+  if(type==='sal') renderSal();
+  else if(type==='tr') renderTr();
+  else if(type==='sam') renderSam();
+  else if(type==='inv') renderInv();
+  else if(type==='exp') renderExp();
+  else if(type==='loan') renderLoan();
+  // scroll to table top
+  var el=document.getElementById(type+'-tbl');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function paginateData(type, data){
+  var pg=_pages[type]||1;
+  var total=data.length;
+  var totalPages=Math.ceil(total/PAGE_SIZE);
+  if(pg>totalPages) pg=1; _pages[type]=pg;
+  var start=(pg-1)*PAGE_SIZE;
+  return {items:data.slice(start,start+PAGE_SIZE), total:total, current:pg};
+}
 
 function renderSal(search){
   var yr=document.getElementById('sal-fyr').value, mo=document.getElementById('sal-fmo').value;
@@ -1779,7 +2256,7 @@ function renderSal(search){
     salSumEl.innerHTML='<div class="stat-box blue" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
       +'<div class="stat-label" style="margin:0;">💰 Salary Summary</div>'
-      +'<select onchange="window._cs.sal=this.value;renderSal()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
+      +'<select onchange="window._cs.sal=this.value;_pages.sal=1;renderSal()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
       +salCurs.map(function(c){return '<option value="'+c+'"'+(c===selC?' selected':'')+'>'+c+'</option>';}).join('')
       +'</select></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
@@ -1796,16 +2273,18 @@ function renderSal(search){
     (!q||r.year.includes(q)||r.month.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q)||r.currency.toLowerCase().includes(q));
   });
   if(!data.length){document.getElementById('sal-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('sal',data);
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Expected</th><th>Received</th><th>Diff</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
   var tE=0,tR=0;
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     var diff=r.received-r.expected; tE+=r.expected; tR+=r.received;
     var oi=DB.sal.indexOf(r);
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(diff>=0?'pos':'neg')+'">'+(diff>=0?'+':'')+N(diff)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'sal\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'sal\','+oi+')">🗑</button></td></tr>';
   });
   var td=tR-tE;
-  h+='</tbody><tfoot><tr class="total-row"><td colspan="2">Total</td><td>'+N(tE)+'</td><td>'+N(tR)+'</td><td class="'+(td>=0?'pos':'neg')+'">'+(td>=0?'+':'')+N(td)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+='</tbody><tfoot><tr class="total-row"><td colspan="2">Page Total</td><td>'+N(tE)+'</td><td>'+N(tR)+'</td><td class="'+(td>=0?'pos':'neg')+'">'+(td>=0?'+':'')+N(td)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+=buildPagination('sal',pg.total,pg.current);
   document.getElementById('sal-tbl').innerHTML=h;
 }
 
@@ -1823,7 +2302,7 @@ function renderTr(search){
     trSumEl.innerHTML='<div class="stat-box gold" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +'<div class="stat-label" style="margin:0;">💸 Total Transferred</div>'
-      +'<select onchange="window._cs.tr=this.value;renderTr()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
+      +'<select onchange="window._cs.tr=this.value;_pages.tr=1;renderTr()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
       +trCurs.map(function(c){return '<option value="'+c+'"'+(c===selC?' selected':'')+'>'+c+'</option>';}).join('')
       +'</select></div>'
       +'<div class="stat-value">'+N(tot2)+' <span style="font-size:11px;font-weight:400;color:var(--muted);">'+selC+'</span></div>'
@@ -1836,15 +2315,17 @@ function renderTr(search){
     (!q||r.method.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
   });
   if(!data.length){document.getElementById('tr-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('tr',data);
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Date</th><th>Method</th><th>Amount</th><th>Cur</th><th></th></tr></thead><tbody>';
   var tot=0;
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     tot+=r.amount; var oi=DB.tr.indexOf(r);
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+(r.date||'-')+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'tr\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'tr\','+oi+')">🗑</button></td></tr>';
   });
-  var trTotLabel=selC?'Total ('+selC+')':'Total';
+  var trTotLabel=selC?'Page Total ('+selC+')':'Page Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="4">'+trTotLabel+'</td><td>'+N(tot)+'</td><td colspan="2"></td></tr></tfoot></table>';
+  h+=buildPagination('tr',pg.total,pg.current);
   document.getElementById('tr-tbl').innerHTML=h;
 }
 
@@ -1861,7 +2342,7 @@ function renderSam(){
     samSumEl.innerHTML='<div class="stat-box purple" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +'<div class="stat-label" style="margin:0;">🤝 Total Samity Paid</div>'
-      +'<select onchange="window._cs.sam=this.value;renderSam()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
+      +'<select onchange="window._cs.sam=this.value;_pages.sam=1;renderSam()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
       +samCurs.map(function(c){return '<option value="'+c+'"'+(c===selC?' selected':'')+'>'+c+'</option>';}).join('')
       +'</select></div>'
       +'<div class="stat-value">'+N(tot2)+' <span style="font-size:11px;font-weight:400;color:var(--muted);">'+selC+'</span></div>'
@@ -1870,15 +2351,17 @@ function renderSam(){
   } else if(samSumEl){ samSumEl.innerHTML=''; }
   var data=DB.sam.filter(function(r){return (yr==='all'||r.year===yr)&&(!selC||r.currency===selC);});
   if(!data.length){document.getElementById('sam-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('sam',data);
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
   var tot=0;
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     tot+=r.amount; var oi=DB.sam.indexOf(r);
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'sam\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'sam\','+oi+')">🗑</button></td></tr>';
   });
-  var totLabel=selC?'Total ('+selC+')':'Total';
+  var totLabel=selC?'Page Total ('+selC+')':'Page Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="2">'+totLabel+'</td><td>'+N(tot)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+=buildPagination('sam',pg.total,pg.current);
   document.getElementById('sam-tbl').innerHTML=h;
 }
 
@@ -1895,7 +2378,7 @@ function renderInv(){
     invSumEl.innerHTML='<div class="stat-box green" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +'<div class="stat-label" style="margin:0;">📈 Total Invested</div>'
-      +'<select onchange="window._cs.inv=this.value;renderInv()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
+      +'<select onchange="window._cs.inv=this.value;_pages.inv=1;renderInv()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'
       +invCurs.map(function(c){return '<option value="'+c+'"'+(c===selC?' selected':'')+'>'+c+'</option>';}).join('')
       +'</select></div>'
       +'<div class="stat-value">'+N(tot2)+' <span style="font-size:11px;font-weight:400;color:var(--muted);">'+selC+'</span></div>'
@@ -1904,15 +2387,17 @@ function renderInv(){
   } else if(invSumEl){ invSumEl.innerHTML='<div class="stat-box green"><div class="stat-label">Total Invested</div><div class="stat-value">0</div></div>'; }
   var data=DB.inv.filter(function(r){return (yr==='all'||r.year===yr)&&(!selC||r.currency===selC);});
   if(!data.length){document.getElementById('inv-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('inv',data);
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th><th>Running Total</th><th></th></tr></thead><tbody>';
   var run=0;
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     run+=r.amount; var oi=DB.inv.indexOf(r);
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td style="color:var(--green);font-weight:600">'+N(run)+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'inv\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'inv\','+oi+')">🗑</button></td></tr>';
   });
-  var invTotLabel=selC?'Total ('+selC+')':'Total';
+  var invTotLabel=selC?'Page Total ('+selC+')':'Page Total';
   h+='</tbody><tfoot><tr class="total-row"><td colspan="2">'+invTotLabel+'</td><td>'+N(run)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+=buildPagination('inv',pg.total,pg.current);
   document.getElementById('inv-tbl').innerHTML=h;
 }
 
@@ -1921,15 +2406,8 @@ function renderExp(){
   var yr=document.getElementById('exp-fyr').value, mo=document.getElementById('exp-fmo').value;
   var searchEl=document.querySelector('#s-exp .search-box');
   var q=searchEl?searchEl.value.toLowerCase():'';
-  // Currency-filtered summary (like loan summary)
   var expCurs=[...new Set(DB.exp.map(function(r){return r.currency;}))];
   var selExpCur=getCurSel('exp',expCurs);
-  // Sync exp-fcur dropdown options (no "All Currency" option — just pick one)
-  var fcurEl=document.getElementById('exp-fcur');
-  if(fcurEl){
-    fcurEl.innerHTML=expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('');
-    fcurEl.value=selExpCur;
-  }
   var fcur=selExpCur;
   var data=DB.exp.filter(function(r){
     return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo)&&
@@ -1948,7 +2426,7 @@ function renderExp(){
       '<div class="stat-box red" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +'<div class="stat-label" style="margin:0;">💳 Total Expense</div>'
-      +'<select onchange="window._cs.exp=this.value;renderExp()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'+expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('')+'</select>'
+      +'<select onchange="window._cs.exp=this.value;_pages.exp=1;renderExp()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'+expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('')+'</select>'
       +'</div>'
       +'<div class="stat-value">'+N(totCur)+' <span style="font-size:11px;font-weight:400;color:var(--muted);">'+selExpCur+'</span></div>'
       +'<div style="margin-top:6px;">'+topHtml2+'</div>'
@@ -1960,14 +2438,16 @@ function renderExp(){
       +'<div class="stat-box orange"><div class="stat-label">Transactions</div><div class="stat-value">0</div></div>';
   }
   if(!data.length){document.getElementById('exp-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('exp',data);
   var h='<table><thead><tr><th>Year</th><th>Month</th><th>Category</th><th>Amount</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
   var tot=0;
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     tot+=r.amount; var oi=DB.exp.indexOf(r);
     h+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.category+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td><td>'+(r.date||'-')+'</td>'
       +'<td><button class="btn-edit" onclick="openEdit(\'exp\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'exp\','+oi+')">🗑</button></td></tr>';
   });
-  h+='</tbody><tfoot><tr class="total-row"><td colspan="3">Total</td><td>'+N(tot)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+='</tbody><tfoot><tr class="total-row"><td colspan="3">Page Total</td><td>'+N(tot)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+=buildPagination('exp',pg.total,pg.current);
   document.getElementById('exp-tbl').innerHTML=h;
 }
 
@@ -1982,14 +2462,36 @@ function renderLoan(search){
   loanCurs.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;fcEl.appendChild(o);});
   if(prevCur&&fcEl.querySelector('option[value="'+prevCur+'"]')) fcEl.value=prevCur;
   var fc=fcEl.value;
+
+  // Quick summary bar — distinct outstanding persons
+  var sumEl=document.getElementById('loan-history-summary');
+  if(sumEl){
+    var allOwe=DB.loan.filter(function(r){return r.type==='owe'&&(fc==='all'||r.currency===fc)&&(r.amount-(r.paid||0))>0;});
+    var allLend=DB.loan.filter(function(r){return r.type==='lend'&&(fc==='all'||r.currency===fc)&&(r.amount-(r.paid||0))>0;});
+    var owePersons=[...new Set(allOwe.map(function(r){return r.person.trim().toLowerCase();}))].length;
+    var lendPersons=[...new Set(allLend.map(function(r){return r.person.trim().toLowerCase();}))].length;
+    sumEl.innerHTML=
+      '<div onclick="document.getElementById(\'loan-filter\').value=\'owe\';renderLoan()" style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:10px 12px;cursor:pointer;">'
+      +'<div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:3px;">🔴 '+T('toPay')+'</div>'
+      +'<div style="font-size:18px;font-weight:800;color:#dc2626;">'+owePersons+'</div>'
+      +'<div style="font-size:10px;color:#6b7280;">'+T('personUnit')+' বাকি আছে</div>'
+      +'</div>'
+      +'<div onclick="document.getElementById(\'loan-filter\').value=\'lend\';renderLoan()" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:10px 12px;cursor:pointer;">'
+      +'<div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:3px;">🟢 '+T('toReceive')+'</div>'
+      +'<div style="font-size:18px;font-weight:800;color:#16a34a;">'+lendPersons+'</div>'
+      +'<div style="font-size:10px;color:#6b7280;">'+T('personUnit')+' পাবো</div>'
+      +'</div>';
+  }
+
   var q=(search||'').toLowerCase();
   var data=DB.loan.filter(function(r){
     return (ft==='all'||r.type===ft)&&(fc==='all'||r.currency===fc)&&
     (!q||r.person.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
   });
   if(!data.length){document.getElementById('loan-tbl').innerHTML='<div class="empty">No data.</div>';return;}
+  var pg=paginateData('loan',data);
   var h='<table><thead><tr><th>Type</th><th>Person</th><th>Amount</th><th>Paid</th><th>Remaining</th><th>Cur</th><th>Date</th><th></th></tr></thead><tbody>';
-  data.forEach(function(r){
+  pg.items.forEach(function(r){
     var rem=r.amount-(r.paid||0);
     var oi=DB.loan.indexOf(r);
     var badge=r.type==='owe'?'<span class="badge-owe">Owe</span>':'<span class="badge-lend">Lend</span>';
@@ -1998,6 +2500,7 @@ function renderLoan(search){
       +'<td><button class="btn-edit" onclick="openEdit(\'loan\','+oi+')">✏️</button><button class="btn-del" onclick="del(\'loan\','+oi+')">🗑</button></td></tr>';
   });
   h+='</tbody></table>';
+  h+=buildPagination('loan',pg.total,pg.current);
   document.getElementById('loan-tbl').innerHTML=h;
 }
 
@@ -2020,10 +2523,55 @@ function renderLoanSummary(){
   var lent=DB.loan.filter(function(r){return r.type==='lend'&&r.currency===cur;});
   var totOwed=owed.reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
   var totLent=lent.reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
-  var net=totLent-totOwed;
+  // distinct person count who still have outstanding balance (not fully settled)
+  var owedPersons=[...new Set(owed.filter(function(r){return (r.amount-(r.paid||0))>0;}).map(function(r){return r.person;}))];
+  var lentPersons=[...new Set(lent.filter(function(r){return (r.amount-(r.paid||0))>0;}).map(function(r){return r.person;}))];
   document.getElementById('loan-stats').innerHTML=
-    '<div class="stat-box red"><div class="stat-label">🔴 '+T('iOwe')+' ('+cur+')</div><div class="stat-value">'+N(totOwed)+'</div><div class="stat-sub">'+owed.length+' loans</div></div>'
-    +'<div class="stat-box green"><div class="stat-label">🟢 '+T('iGet')+' ('+cur+')</div><div class="stat-value">'+N(totLent)+'</div><div class="stat-sub">'+lent.length+' loans</div></div>';
+    '<div class="stat-box red" style="cursor:pointer;" onclick="showLoanPersonList(\'owe\',\''+cur+'\')"><div class="stat-label">🔴 '+T('iOwe')+' ('+cur+')</div><div class="stat-value">'+N(totOwed)+'</div><div class="stat-sub">'+owedPersons.length+' '+T('personUnit')+' ›</div></div>'
+    +'<div class="stat-box green" style="cursor:pointer;" onclick="showLoanPersonList(\'lend\',\''+cur+'\')"><div class="stat-label">🟢 '+T('iGet')+' ('+cur+')</div><div class="stat-value">'+N(totLent)+'</div><div class="stat-sub">'+lentPersons.length+' '+T('personUnit')+' ›</div></div>'
+    +'<div id="loan-person-list-box" style="grid-column:1/-1;display:none;"></div>';
+}
+
+function showLoanPersonList(type,cur){
+  var box=document.getElementById('loan-person-list-box');
+  if(!box)return;
+  // toggle: if already showing same type, hide it
+  if(box.dataset.shown===type){ box.style.display='none'; box.dataset.shown=''; return; }
+  var rows=DB.loan.filter(function(r){return r.type===type&&r.currency===cur&&(r.amount-(r.paid||0))>0;});
+  var byPerson={}, displayNm={};
+  rows.forEach(function(r){
+    var p=r.person.trim();
+    var key=p.toLowerCase();
+    if(!byPerson[key]){ byPerson[key]=0; displayNm[key]=p; }
+    byPerson[key]+=(r.amount-(r.paid||0));
+  });
+  var keys=Object.keys(byPerson).sort();
+  var title=type==='owe'?T('iOwe'):T('iGet');
+  var color=type==='owe'?'var(--red)':'var(--green)';
+  var h='<div style="background:var(--bg);border-radius:10px;padding:10px;margin-top:4px;">'
+    +'<div style="font-size:11px;font-weight:700;color:'+color+';margin-bottom:8px;">'+title+' — '+keys.length+' '+T('personUnit')+'</div>';
+  if(keys.length===0){
+    h+='<div style="font-size:12px;color:var(--muted);">'+T('noLoan')+'</div>';
+  } else {
+    keys.forEach(function(key){
+      var n=displayNm[key];
+      h+='<div onclick="event.stopPropagation();togglePersonRowFromLoan(\''+n.replace(/'/g,"\\'")+'\')" style="display:flex;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer;">'
+        +'<span style="font-size:12px;font-weight:600;">👤 '+n+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:'+color+';">'+N(byPerson[key])+' '+cur+'</span>'
+        +'</div>';
+    });
+  }
+  h+='</div>';
+  box.innerHTML=h;
+  box.style.display='block';
+  box.dataset.shown=type;
+}
+
+function togglePersonRowFromLoan(name){
+  // switch to person-wise summary card view if it exists, then expand
+  var el=document.getElementById('loan-persons');
+  if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); }
+  setTimeout(function(){ if(typeof togglePersonRow==='function') togglePersonRow(name); }, 300);
 }
 
 function fillLoanPersonList(){
@@ -2036,86 +2584,256 @@ function renderLoanPersons(){
   fillLoanPersonList();
   var el=document.getElementById('loan-persons'); if(!el)return;
   if(!DB.loan.length){el.innerHTML='<div class="empty">'+T('noLoan')+'</div>';return;}
+
   var persons={};
-  DB.loan.forEach(function(r,idx){
-    var p=r.person;
-    if(!persons[p]) persons[p]={owe:[],lend:[]};
-    persons[p][r.type].push({r:r,idx:idx});
+  var displayNames={};
+  DB.loan.forEach(function(r){
+    var p=r.person.trim();
+    var key=p.toLowerCase();
+    if(!persons[key]){ persons[key]={owe:[],lend:[]}; displayNames[key]=p; }
+    persons[key][r.type].push(r);
   });
-  var html='';
-  Object.keys(persons).sort().forEach(function(name,ni){
-    var d=persons[name];
+
+  var outstanding=[], settled=[];
+  Object.keys(persons).sort().forEach(function(key){
+    var name=displayNames[key];
+    var d=persons[key];
     var curTotals={};
-    d.owe.forEach(function(e){
-      var c=e.r.currency; if(!curTotals[c]) curTotals[c]={owe:0,lend:0,oweLoans:[],lendLoans:[]};
-      curTotals[c].owe+=(e.r.amount-(e.r.paid||0));
-      curTotals[c].oweLoans.push(e);
+    d.owe.forEach(function(r){
+      var c=r.currency; if(!curTotals[c]) curTotals[c]={owe:0,lend:0,oweLoans:[],lendLoans:[]};
+      curTotals[c].owe+=(r.amount-(r.paid||0));
+      curTotals[c].oweLoans.push(r);
     });
-    d.lend.forEach(function(e){
-      var c=e.r.currency; if(!curTotals[c]) curTotals[c]={owe:0,lend:0,oweLoans:[],lendLoans:[]};
-      curTotals[c].lend+=(e.r.amount-(e.r.paid||0));
-      curTotals[c].lendLoans.push(e);
+    d.lend.forEach(function(r){
+      var c=r.currency; if(!curTotals[c]) curTotals[c]={owe:0,lend:0,oweLoans:[],lendLoans:[]};
+      curTotals[c].lend+=(r.amount-(r.paid||0));
+      curTotals[c].lendLoans.push(r);
     });
-    var pid='lp'+ni;
-    var badges=Object.keys(curTotals).map(function(c){
-      var t=curTotals[c]; var parts=[];
-      if(t.owe>0) parts.push('<span class="badge-owe">'+T('toPay')+': '+N(t.owe)+' '+c+'</span>');
-      if(t.lend>0) parts.push('<span class="badge-lend">'+T('toReceive')+': '+N(t.lend)+' '+c+'</span>');
-      return parts.join(' ');
-    }).join(' ');
     var totalOwe=Object.keys(curTotals).reduce(function(s,c){return s+curTotals[c].owe;},0);
     var totalLend=Object.keys(curTotals).reduce(function(s,c){return s+curTotals[c].lend;},0);
-    var borderColor=totalLend>0&&totalOwe===0?'var(--green)':totalOwe>0&&totalLend===0?'var(--red)':'var(--gold)';
-    html+='<div style="border:2px solid '+borderColor+';border-radius:10px;margin-bottom:8px;overflow:hidden;">';
-    html+='<div class="lp-hdr" data-pid="'+pid+'" style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;cursor:pointer;background:var(--bg);border-left:4px solid '+borderColor+';">';
-    html+='<div><div style="font-weight:700;font-size:13px;">👤 '+name+'</div><div style="margin-top:4px;">'+badges+'</div></div>';
-    html+='<span id="'+pid+'-arrow" style="font-size:16px;color:var(--muted);">▼</span>';
-    html+='</div>';
-    html+='<div id="'+pid+'" style="display:none;padding:10px 12px;">';
+    var isSettled=totalOwe===0&&totalLend===0;
+    var obj={name:name,curTotals:curTotals,totalOwe:totalOwe,totalLend:totalLend};
+    if(isSettled) settled.push(obj); else outstanding.push(obj);
+  });
+
+  function buildRow(obj){
+    var name=obj.name, curTotals=obj.curTotals;
+    var isSettled=obj.totalOwe===0&&obj.totalLend===0;
+    var oweStr='', lendStr='';
+    Object.keys(curTotals).forEach(function(c){
+      if(curTotals[c].owe>0) oweStr+='<div class="neg" style="font-size:11px;">'+N(curTotals[c].owe)+' <span style="font-size:10px;color:var(--muted);">'+c+'</span></div>';
+      if(curTotals[c].lend>0) lendStr+='<div class="pos" style="font-size:11px;">'+N(curTotals[c].lend)+' <span style="font-size:10px;color:var(--muted);">'+c+'</span></div>';
+    });
+    if(!oweStr) oweStr='<span style="color:var(--muted);font-size:11px;">—</span>';
+    if(!lendStr) lendStr='<span style="color:var(--muted);font-size:11px;">—</span>';
+    var safeName=name.replace(/[^a-zA-Z0-9]/g,'_');
+    return '<tr onclick="togglePersonRow(\''+name.replace(/'/g,"\\'")+'\')" style="cursor:pointer;'+(isSettled?'opacity:0.5;':'')+'border-bottom:1px solid var(--border);">'
+      +'<td style="padding:9px 8px;font-size:12px;font-weight:600;">👤 '+name+'</td>'
+      +'<td style="padding:9px 8px;">'+oweStr+'</td>'
+      +'<td style="padding:9px 8px;">'+lendStr+'</td>'
+      +'<td style="padding:9px 8px;text-align:center;color:var(--muted);font-size:14px;"><span id="person-arrow-'+safeName+'" class="person-arrow" style="display:inline-block;transition:transform 0.2s;">›</span></td>'
+      +'</tr>'
+      +'<tr class="person-detail-row" id="person-detail-'+safeName+'" style="display:none;">'
+      +'<td colspan="4" class="person-detail-cell" style="padding:10px 8px;background:var(--bg);border-bottom:1px solid var(--border);"></td>'
+      +'</tr>';
+  }
+
+  function buildSimpleRow(name,amt,cur){
+    var safeName=name.replace(/[^a-zA-Z0-9]/g,'_');
+    return '<tr onclick="togglePersonRow(\''+name.replace(/'/g,"\\'")+'\')" style="cursor:pointer;border-bottom:1px solid var(--border);">'
+      +'<td style="padding:9px 8px;font-size:12px;font-weight:600;">👤 '+name+'</td>'
+      +'<td style="padding:9px 8px;font-size:12px;font-weight:700;">'+N(amt)+' <span style="font-size:10px;color:var(--muted);">'+cur+'</span></td>'
+      +'<td style="padding:9px 8px;text-align:center;color:var(--muted);font-size:14px;"><span id="person-arrow-'+safeName+'" class="person-arrow" style="display:inline-block;transition:transform 0.2s;">›</span></td>'
+      +'</tr>'
+      +'<tr class="person-detail-row" id="person-detail-'+safeName+'" style="display:none;">'
+      +'<td colspan="3" class="person-detail-cell" style="padding:10px 8px;background:var(--bg);border-bottom:1px solid var(--border);"></td>'
+      +'</tr>';
+  }
+
+  // Build flat lists: who I owe to, who owes me
+  var oweList=[], lendList=[];
+  outstanding.forEach(function(obj){
+    Object.keys(obj.curTotals).forEach(function(c){
+      var t=obj.curTotals[c];
+      if(t.owe>0) oweList.push({name:obj.name,amt:t.owe,cur:c});
+      if(t.lend>0) lendList.push({name:obj.name,amt:t.lend,cur:c});
+    });
+  });
+
+  var html='';
+
+  // Section: যাদের দিতে হবে (I Owe)
+  html+='<div style="font-size:11px;font-weight:700;color:#c0392b;margin-bottom:6px;">🔴 '+T('toPay')+' ('+oweList.length+' '+T('personUnit')+')</div>';
+  if(oweList.length){
+    html+='<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">'
+      +'<table style="width:100%;border-collapse:collapse;">'
+      +'<thead><tr style="background:var(--bg);font-size:10px;color:var(--muted);">'
+      +'<th style="padding:7px 8px;text-align:left;font-weight:600;">'+T('name')+'</th>'
+      +'<th style="padding:7px 8px;text-align:left;font-weight:600;">'+T('toPay')+'</th>'
+      +'<th style="padding:7px 8px;"></th>'
+      +'</tr></thead><tbody>';
+    oweList.forEach(function(o){ html+=buildSimpleRow(o.name,o.amt,o.cur); });
+    html+='</tbody></table></div>';
+  } else {
+    html+='<div style="text-align:center;padding:10px;background:var(--card);border-radius:10px;margin-bottom:12px;color:var(--muted);font-size:12px;">—</div>';
+  }
+
+  // Section: যাদের কাছ থেকে পাব (I Get)
+  html+='<div style="font-size:11px;font-weight:700;color:#1e8449;margin-bottom:6px;">🟢 '+T('toReceive')+' ('+lendList.length+' '+T('personUnit')+')</div>';
+  if(lendList.length){
+    html+='<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">'
+      +'<table style="width:100%;border-collapse:collapse;">'
+      +'<thead><tr style="background:var(--bg);font-size:10px;color:var(--muted);">'
+      +'<th style="padding:7px 8px;text-align:left;font-weight:600;">'+T('name')+'</th>'
+      +'<th style="padding:7px 8px;text-align:left;font-weight:600;">'+T('toReceive')+'</th>'
+      +'<th style="padding:7px 8px;"></th>'
+      +'</tr></thead><tbody>';
+    lendList.forEach(function(o){ html+=buildSimpleRow(o.name,o.amt,o.cur); });
+    html+='</tbody></table></div>';
+  } else {
+    html+='<div style="text-align:center;padding:10px;background:var(--card);border-radius:10px;margin-bottom:12px;color:var(--muted);font-size:12px;">—</div>';
+  }
+
+  if(outstanding.length===0){
+    html='<div style="text-align:center;padding:12px;background:var(--card);border-radius:10px;margin-bottom:8px;color:var(--green);font-size:13px;font-weight:600;">'+T('allSettled')+'</div>';
+  }
+
+  if(settled.length){
+    html+='<div onclick="toggleSettledSec()" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;background:#e8f5e9;cursor:pointer;margin-bottom:6px;">'
+      +'<span style="font-size:12px;font-weight:700;color:#1e8449;">'+T('settledTitle')+' ('+settled.length+' '+T('personUnit')+')</span>'
+      +'<span id="settled-sec-arrow" style="color:#1e8449;font-size:13px;">▼</span>'
+      +'</div>';
+    html+='<div id="settled-sec-list" style="display:none;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px;">'
+      +'<table style="width:100%;border-collapse:collapse;"><tbody>';
+    settled.forEach(function(obj){ html+=buildRow(obj); });
+    html+='</tbody></table></div>';
+  }
+
+  el.innerHTML=html;
+}
+
+  function buildPersonDetailHTML(name){
+    var persons={};
+    DB.loan.forEach(function(r,i){ var p=r.person.trim().toLowerCase(); if(!persons[p]) persons[p]={owe:[],lend:[]}; persons[p][r.type].push({r:r,i:i}); });
+    var d=persons[name.trim().toLowerCase()]; if(!d) return '';
+    var curTotals={};
+    d.owe.forEach(function(e){ var c=e.r.currency; if(!curTotals[c]) curTotals[c]={oweLoans:[],lendLoans:[]}; curTotals[c].oweLoans.push(e); });
+    d.lend.forEach(function(e){ var c=e.r.currency; if(!curTotals[c]) curTotals[c]={oweLoans:[],lendLoans:[]}; curTotals[c].lendLoans.push(e); });
+
+    var h='';
     Object.keys(curTotals).forEach(function(c){
       var t=curTotals[c];
-      html+='<div style="font-size:11px;font-weight:700;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;">'+c+'</div>';
+      h+='<div style="font-size:11px;font-weight:700;color:var(--muted);margin:8px 0 5px;text-transform:uppercase;letter-spacing:.05em;">'+c+'</div>';
+
       if(t.oweLoans.length){
-        html+='<div style="font-size:11px;color:var(--red);font-weight:600;margin-bottom:3px;">'+T('borrowedDetail')+'</div>';
+        h+='<div style="font-size:11px;color:var(--red);font-weight:600;margin-bottom:4px;">🔴 '+T('borrowedDetail')+'</div>';
         t.oweLoans.forEach(function(e){
-          var rem=e.r.amount-(e.r.paid||0);
-          html+='<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:6px;margin-bottom:3px;font-size:12px;">';
-          html+='<div><div>'+T('original')+': <b>'+N(e.r.amount)+'</b> | '+T('paid')+': <b>'+N(e.r.paid||0)+'</b></div>';
-          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' - '+e.r.notes:'')+'</div>';
-          html+='</div>';
-          html+='<div style="text-align:right;min-width:60px;"><div class="'+(rem>0?'neg':'pos')+'" style="font-size:13px;">'+N(rem)+'</div><div style="font-size:10px;color:var(--muted);">'+(rem>0?T('remaining'):T('done'))+'</div></div>';
-          html+='</div>';
+          var r=e.r, idx=e.i;
+          var rem=r.amount-(r.paid||0);
+          var settled=rem<=0;
+          h+='<div style="background:var(--card);border-radius:8px;margin-bottom:6px;overflow:hidden;border:1px solid var(--border);">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;">'
+            +'<div style="font-size:12px;"><div>'+T('original')+': <b>'+N(r.amount)+'</b> | '+T('paid')+': <b>'+N(r.paid||0)+'</b></div>'
+            +(r.date?'<div style="font-size:10px;color:var(--muted);">'+r.date+(r.notes?' — '+r.notes:'')+'</div>':'')+'</div>'
+            +'<div style="text-align:right;min-width:70px;">'
+            +'<div class="'+(settled?'pos':'neg')+'" style="font-size:13px;font-weight:700;">'+(settled?'✅ '+T('done'):N(rem))+'</div>'
+            +(!settled?'<button data-idx="'+idx+'" data-type="owe" onclick="showPaidInput(this,\''+idx+'\')" style="margin-top:4px;font-size:10px;padding:3px 8px;background:var(--red);color:white;border:none;border-radius:5px;cursor:pointer;font-family:inherit;">'+T('payBtn')+'</button>':'')
+            +'</div></div>'
+            +'<div id="paid-input-'+idx+'" style="display:none;padding:8px 10px;border-top:1px solid var(--border);background:var(--bg);">'
+            +'<div style="display:flex;gap:6px;align-items:center;">'
+            +'<input type="number" id="paid-amt-'+idx+'" placeholder="'+T('enterAmtLbl')+'" style="flex:1;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:var(--card);color:var(--text);font-family:inherit;">'
+            +'<button onclick="savePaid('+idx+')" style="padding:6px 12px;background:#1a3a5c;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">'+T('saveBtn')+'</button>'
+            +'<button onclick="document.getElementById(\'paid-input-'+idx+'\').style.display=\'none\'" style="padding:6px 10px;background:var(--bg);color:var(--muted);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;">✕</button>'
+            +'</div></div>'
+            +'</div>';
         });
       }
+
       if(t.lendLoans.length){
-        html+='<div style="font-size:11px;color:var(--green);font-weight:600;margin:6px 0 3px;">'+T('lentDetail')+'</div>';
+        h+='<div style="font-size:11px;color:var(--green);font-weight:600;margin:8px 0 4px;">🟢 '+T('lentDetail')+'</div>';
         t.lendLoans.forEach(function(e){
-          var rem=e.r.amount-(e.r.paid||0);
-          html+='<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:6px;margin-bottom:3px;font-size:12px;">';
-          html+='<div><div>'+T('original')+': <b>'+N(e.r.amount)+'</b> | '+T('received2')+': <b>'+N(e.r.paid||0)+'</b></div>';
-          if(e.r.date) html+='<div style="font-size:10px;color:var(--muted);">'+e.r.date+(e.r.notes?' - '+e.r.notes:'')+'</div>';
-          html+='</div>';
-          html+='<div style="text-align:right;min-width:60px;"><div style="font-size:13px;color:var(--green);font-weight:600;">'+N(rem)+'</div><div style="font-size:10px;color:var(--muted);">'+(rem>0?T('pending'):T('done'))+'</div></div>';
-          html+='</div>';
+          var r=e.r, idx=e.i;
+          var rem=r.amount-(r.paid||0);
+          var settled=rem<=0;
+          h+='<div style="background:var(--card);border-radius:8px;margin-bottom:6px;overflow:hidden;border:1px solid var(--border);">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;">'
+            +'<div style="font-size:12px;"><div>'+T('original')+': <b>'+N(r.amount)+'</b> | '+T('received2')+': <b>'+N(r.paid||0)+'</b></div>'
+            +(r.date?'<div style="font-size:10px;color:var(--muted);">'+r.date+(r.notes?' — '+r.notes:'')+'</div>':'')+'</div>'
+            +'<div style="text-align:right;min-width:70px;">'
+            +'<div style="font-size:13px;font-weight:700;color:var(--green);">'+(settled?'✅ '+T('done'):N(rem))+'</div>'
+            +(!settled?'<button data-idx="'+idx+'" onclick="showPaidInput(this,\''+idx+'\')" style="margin-top:4px;font-size:10px;padding:3px 8px;background:var(--green);color:white;border:none;border-radius:5px;cursor:pointer;font-family:inherit;">'+T('receivedBtn')+'</button>':'')
+            +'</div></div>'
+            +'<div id="paid-input-'+idx+'" style="display:none;padding:8px 10px;border-top:1px solid var(--border);background:var(--bg);">'
+            +'<div style="display:flex;gap:6px;align-items:center;">'
+            +'<input type="number" id="paid-amt-'+idx+'" placeholder="'+T('enterAmtLbl')+'" style="flex:1;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:var(--card);color:var(--text);font-family:inherit;">'
+            +'<button onclick="savePaid('+idx+')" style="padding:6px 12px;background:#1a3a5c;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">'+T('saveBtn')+'</button>'
+            +'<button onclick="document.getElementById(\'paid-input-'+idx+'\').style.display=\'none\'" style="padding:6px 10px;background:var(--bg);color:var(--muted);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;">✕</button>'
+            +'</div></div>'
+            +'</div>';
         });
       }
     });
-    html+='</div></div>';
-  });
-  el.innerHTML=html;
-  // Attach click handlers via event delegation
-  el.querySelectorAll('.lp-hdr').forEach(function(hdr){
-    hdr.addEventListener('click',function(){
-      var pid=hdr.getAttribute('data-pid');
-      var body=document.getElementById(pid);
-      var arrow=document.getElementById(pid+'-arrow');
-      if(!body)return;
-      var open=body.style.display==='block';
-      body.style.display=open?'none':'block';
-      if(arrow) arrow.textContent=open?'▼':'▲';
-    });
-  });
+    return h;
+  }
+
+  window.showPaidInput=function(btn, idx){
+    var el=document.getElementById('paid-input-'+idx);
+    if(el) el.style.display=el.style.display==='none'?'block':'none';
+  };
+
+  window.savePaid=function(idx){
+    var r=DB.loan[idx]; if(!r)return;
+    var amt=parseFloat(document.getElementById('paid-amt-'+idx).value)||0;
+    if(!amt||amt<=0){alert('পরিমাণ লিখুন!');return;}
+    var remBefore=r.amount-(r.paid||0);
+    var newPaid=(r.paid||0)+amt;
+    var overpay=0;
+    if(newPaid>r.amount){ overpay=newPaid-r.amount; newPaid=r.amount; }
+    DB.loan[idx].paid=newPaid;
+    if(overpay>0){
+      // Extra amount flips to the opposite direction — create a reverse loan entry
+      var reverseType=r.type==='owe'?'lend':'owe';
+      DB.loan.push({type:reverseType,person:r.person,currency:r.currency,amount:overpay,paid:0,date:today(),notes:(r.type==='owe'?'অতিরিক্ত পরিশোধ (Overpaid)':'অতিরিক্ত গ্রহণ (Overreceived)')});
+    }
+    saveDB();
+    renderLoanPersons();
+    renderLoanSummary();
+    if(typeof renderDash==='function') renderDash();
+    if(overpay>0){
+      alert((r.type==='owe'?'✅ পুরো টাকা পরিশোধ হয়ে গেছে! অতিরিক্ত '+N(overpay)+' '+r.currency+' এখন আপনি '+r.person+' এর কাছ থেকে পাবেন।':'✅ পুরো টাকা ফেরত পেয়ে গেছেন! অতিরিক্ত '+N(overpay)+' '+r.currency+' এখন আপনাকে '+r.person+' কে দিতে হবে।'));
+    }
+    // re-expand the same person's row after re-render
+    setTimeout(function(){ togglePersonRow(r.person); }, 30);
+  };
+
+  window.togglePersonRow=function(name){
+    var safeName=name.replace(/[^a-zA-Z0-9]/g,'_');
+    var detailRow=document.getElementById('person-detail-'+safeName);
+    if(!detailRow) return;
+    var isOpen=detailRow.style.display==='table-row';
+    // close all other open rows
+    document.querySelectorAll('.person-detail-row').forEach(function(r){ r.style.display='none'; });
+    document.querySelectorAll('.person-arrow').forEach(function(a){ a.textContent='›'; a.style.transform='rotate(0deg)'; });
+    if(!isOpen){
+      detailRow.style.display='table-row';
+      var arrow=document.getElementById('person-arrow-'+safeName);
+      if(arrow){ arrow.textContent='⌄'; }
+      var cell=detailRow.querySelector('.person-detail-cell');
+      if(cell) cell.innerHTML=buildPersonDetailHTML(name);
+    }
+  };
+
+
+function toggleSettledSec(){
+  var list=document.getElementById('settled-sec-list');
+  var arrow=document.getElementById('settled-sec-arrow');
+  if(!list)return;
+  var open=list.style.display==='block';
+  list.style.display=open?'none':'block';
+  if(arrow) arrow.textContent=open?'▼':'▲';
 }
+
+
 
 // DASHBOARD
 function renderDash(){
@@ -2540,10 +3258,14 @@ var LANG={
     personSummary:'👤 Person-wise Summary',
     iBorrowedShort:'I Borrowed', iLentShort:'I Lent',
     iOweShort:'I Owe', iGetShort:'I Get',
-    toReceive:'To Receive', toPay:'To Pay',
+    toReceive:'To Receive', toPay:'To Pay', name:'Name',
     original:'Principal', paid:'Paid', remaining:'Remaining', done:'Done',
     received2:'Received', pending:'Pending',
+    payBtn:'Pay', receivedBtn:'Received', saveBtn:'✓ Save',
+    enterAmtLbl:'Enter amount',
     noLoan:'No loans found.', noLoanData:'No loan data.',
+    outstandingTitle:'🔴 Outstanding', settledTitle:'✅ Settled', allSettled:'🎉 All loans settled!',
+    personUnit:'people',
     // search / empty
     noResult:'No results found',
     // alerts
@@ -2588,10 +3310,14 @@ var LANG={
     personSummary:'👤 Person-wise হিসাব',
     iBorrowedShort:'আমি নিয়েছি', iLentShort:'আমি দিয়েছি',
     iOweShort:'আমি দেব', iGetShort:'আমি পাব',
-    toReceive:'পাওনা', toPay:'দেনা',
+    toReceive:'পাওনা', toPay:'দেনা', name:'নাম',
     original:'মূল', paid:'পরিশোধ', remaining:'বাকি', done:'শেষ',
     received2:'পেয়েছি', pending:'পাওয়া বাকি',
+    payBtn:'পরিশোধ করুন', receivedBtn:'পেয়েছি', saveBtn:'✓ সেভ',
+    enterAmtLbl:'পরিমাণ লিখুন',
     noLoan:'কোনো loan নেই।', noLoanData:'Loan data নেই।',
+    outstandingTitle:'🔴 বাকি আছে', settledTitle:'✅ Settled', allSettled:'🎉 সব loan settled!',
+    personUnit:'জন',
     // search / empty
     noResult:'কোনো result পাওয়া যায়নি',
     // alerts
@@ -2706,13 +3432,107 @@ function setLang(l,btn){
 function dlPDF(){
   var yr=document.getElementById('pdf-yr').value, mo=document.getElementById('pdf-mo').value, sec=document.getElementById('pdf-sec').value;
   function f(arr){return arr.filter(function(r){return (yr==='all'||r.year===yr)&&(mo==='all'||r.month===mo);});}
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;color:#1a1a2e;}h1{color:#1a3a5c;border-bottom:3px solid #f39c12;padding-bottom:8px;}h2{color:#048a81;margin:20px 0 8px;font-size:14px;}table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}th{background:#1a3a5c;color:white;padding:7px;text-align:left;}td{padding:6px 7px;border-bottom:1px solid #e2e8f0;}tr:nth-child(even) td{background:#f8fafc;}.tot td{background:#1a3a5c!important;color:white!important;font-weight:700;}.pos{color:#1e8449;font-weight:600;}.neg{color:#c0392b;font-weight:600;}</style></head><body><h1>Amar Hisab - Report</h1><p style="font-size:11px;color:#666;">Year: '+(yr==='all'?'All':yr)+' | Month: '+(mo==='all'?'All':mo)+' | '+new Date().toLocaleDateString()+'</p>';
-  if(sec==='all'||sec==='sal'){var d=f(DB.sal);if(d.length){var tE=0,tR=0;html+='<h2>Salary</h2><table><tr><th>Year</th><th>Month</th><th>Expected</th><th>Received</th><th>Diff</th><th>Cur</th></tr>';d.forEach(function(r){var df=r.received-r.expected;tE+=r.expected;tR+=r.received;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(df>=0?'pos':'neg')+'">'+(df>=0?'+':'')+N(df)+'</td><td>'+r.currency+'</td></tr>';});var td=tR-tE;html+='<tr class="tot"><td colspan="2">Total</td><td>'+N(tE)+'</td><td>'+N(tR)+'</td><td>'+(td>=0?'+':'')+N(td)+'</td><td></td></tr></table>';}}
-  if(sec==='all'||sec==='tr'){var d2=f(DB.tr);var t2=0;if(d2.length){html+='<h2>Transfer</h2><table><tr><th>Year</th><th>Month</th><th>Method</th><th>Amount</th><th>Cur</th></tr>';d2.forEach(function(r){t2+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="3">Total</td><td>'+N(t2)+'</td><td></td></tr></table>';}}
-  if(sec==='all'||sec==='sam'){var d3=f(DB.sam);var t3=0;if(d3.length){html+='<h2>Samity</h2><table><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th></tr>';d3.forEach(function(r){t3+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="2">Total</td><td>'+N(t3)+'</td><td></td></tr></table>';}}
-  if(sec==='all'||sec==='inv'){var d4=f(DB.inv);var t4=0;if(d4.length){html+='<h2>Investment</h2><table><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th></tr>';d4.forEach(function(r){t4+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="2">Total</td><td>'+N(t4)+'</td><td></td></tr></table>';}}
-  if(sec==='all'||sec==='exp'){var d5=f(DB.exp);var t5=0;if(d5.length){html+='<h2>Expense</h2><table><tr><th>Year</th><th>Month</th><th>Category</th><th>Amount</th><th>Cur</th></tr>';d5.forEach(function(r){t5+=r.amount;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.category+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});html+='<tr class="tot"><td colspan="3">Total</td><td>'+N(t5)+'</td><td></td></tr></table>';}}
-  if(sec==='all'||sec==='loan'){var d6=DB.loan;if(d6.length){html+='<h2>Loan</h2><table><tr><th>Type</th><th>Person</th><th>Amount</th><th>Paid</th><th>Remaining</th><th>Cur</th></tr>';d6.forEach(function(r){var rem=r.amount-(r.paid||0);html+='<tr><td>'+(r.type==='owe'?'Owe':'Lend')+'</td><td>'+r.person+'</td><td>'+N(r.amount)+'</td><td>'+N(r.paid||0)+'</td><td>'+N(rem)+'</td><td>'+r.currency+'</td></tr>';});html+='</table>';}}
+
+  // Currency-wise total helper
+  function curTotals(arr, field){
+    var tots={};
+    arr.forEach(function(r){
+      var cur=r.currency||'?';
+      tots[cur]=(tots[cur]||0)+(r[field]||0);
+    });
+    return tots;
+  }
+  function totRow(tots, colspan){
+    var html='';
+    Object.keys(tots).forEach(function(cur){
+      html+='<tr class="tot"><td colspan="'+colspan+'">Total ('+cur+')</td><td>'+N(tots[cur])+'</td><td>'+cur+'</td></tr>';
+    });
+    return html;
+  }
+
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;color:#1a1a2e;}h1{color:#1a3a5c;border-bottom:3px solid #f39c12;padding-bottom:8px;}h2{color:#048a81;margin:20px 0 8px;font-size:14px;}table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}th{background:#1a3a5c;color:white;padding:7px;text-align:left;}td{padding:6px 7px;border-bottom:1px solid #e2e8f0;}tr:nth-child(even) td{background:#f8fafc;}.tot td{background:#1a3a5c!important;color:white!important;font-weight:700;}.pos{color:#1e8449;font-weight:600;}.neg{color:#c0392b;font-weight:600;}</style></head><body>';
+  html+='<h1>Amar Hisab - Report</h1><p style="font-size:11px;color:#666;">Year: '+(yr==='all'?'All':yr)+' | Month: '+(mo==='all'?'All':mo)+' | '+new Date().toLocaleDateString()+'</p>';
+
+  // SALARY
+  if(sec==='all'||sec==='sal'){
+    var d=f(DB.sal);
+    if(d.length){
+      html+='<h2>📈 Salary</h2><table><tr><th>Year</th><th>Month</th><th>Expected</th><th>Received</th><th>Diff</th><th>Cur</th></tr>';
+      d.forEach(function(r){var df=r.received-r.expected;html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.expected)+'</td><td>'+N(r.received)+'</td><td class="'+(df>=0?'pos':'neg')+'">'+(df>=0?'+':'')+N(df)+'</td><td>'+r.currency+'</td></tr>';});
+      // Per-currency totals
+      var curs=[...new Set(d.map(function(r){return r.currency;}))];
+      curs.forEach(function(cur){
+        var cd=d.filter(function(r){return r.currency===cur;});
+        var tE=cd.reduce(function(s,r){return s+r.expected;},0);
+        var tR=cd.reduce(function(s,r){return s+r.received;},0);
+        var td=tR-tE;
+        html+='<tr class="tot"><td colspan="2">Total ('+cur+')</td><td>'+N(tE)+'</td><td>'+N(tR)+'</td><td>'+(td>=0?'+':'')+N(td)+'</td><td>'+cur+'</td></tr>';
+      });
+      html+='</table>';
+    }
+  }
+
+  // TRANSFER
+  if(sec==='all'||sec==='tr'){
+    var d2=f(DB.tr);
+    if(d2.length){
+      html+='<h2>💸 Transfer</h2><table><tr><th>Year</th><th>Month</th><th>Method</th><th>Amount</th><th>Cur</th></tr>';
+      d2.forEach(function(r){html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.method+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});
+      html+=totRow(curTotals(d2,'amount'),3);
+      html+='</table>';
+    }
+  }
+
+  // SAMITY
+  if(sec==='all'||sec==='sam'){
+    var d3=f(DB.sam);
+    if(d3.length){
+      html+='<h2>🤝 Samity</h2><table><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th></tr>';
+      d3.forEach(function(r){html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});
+      html+=totRow(curTotals(d3,'amount'),2);
+      html+='</table>';
+    }
+  }
+
+  // INVESTMENT
+  if(sec==='all'||sec==='inv'){
+    var d4=f(DB.inv);
+    if(d4.length){
+      html+='<h2>📈 Investment</h2><table><tr><th>Year</th><th>Month</th><th>Amount</th><th>Cur</th></tr>';
+      d4.forEach(function(r){html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});
+      html+=totRow(curTotals(d4,'amount'),2);
+      html+='</table>';
+    }
+  }
+
+  // EXPENSE
+  if(sec==='all'||sec==='exp'){
+    var d5=f(DB.exp);
+    if(d5.length){
+      html+='<h2>💳 Expense</h2><table><tr><th>Year</th><th>Month</th><th>Category</th><th>Amount</th><th>Cur</th></tr>';
+      d5.forEach(function(r){html+='<tr><td>'+r.year+'</td><td>'+r.month+'</td><td>'+r.category+'</td><td>'+N(r.amount)+'</td><td>'+r.currency+'</td></tr>';});
+      html+=totRow(curTotals(d5,'amount'),3);
+      html+='</table>';
+    }
+  }
+
+  // LOAN
+  if(sec==='all'||sec==='loan'){
+    var d6=DB.loan;
+    if(d6.length){
+      html+='<h2>🤲 Loan</h2><table><tr><th>Type</th><th>Person</th><th>Amount</th><th>Paid</th><th>Remaining</th><th>Cur</th></tr>';
+      d6.forEach(function(r){var rem=r.amount-(r.paid||0);html+='<tr><td>'+(r.type==='owe'?'Owe':'Lend')+'</td><td>'+r.person+'</td><td>'+N(r.amount)+'</td><td>'+N(r.paid||0)+'</td><td>'+N(rem)+'</td><td>'+r.currency+'</td></tr>';});
+      // Per-currency remaining
+      var lCurs=[...new Set(d6.map(function(r){return r.currency;}))];
+      lCurs.forEach(function(cur){
+        var cd=d6.filter(function(r){return r.currency===cur;});
+        var rem=cd.reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
+        html+='<tr class="tot"><td colspan="4">Remaining ('+cur+')</td><td>'+N(rem)+'</td><td>'+cur+'</td></tr>';
+      });
+      html+='</table>';
+    }
+  }
+
   html+='</body></html>';
   var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='AmarHisab_'+yr+'_'+mo+'.html';a.click();URL.revokeObjectURL(url);
   alert(T('pdfAlert'));
@@ -3019,7 +3839,7 @@ function loadProfile(){
   updateProfileUI(p);
 }
 
-document.getElementById('dt').textContent=new Date().toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'});
+document.getElementById('dt').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 fillYears(); initYrSearchable(); setDefaults(); fillCats(); fillAllCurSelects(); renderCurChips(); syncYrs(); renderDash(); applySlideOpts(); loadProfile(); loadReminders(); checkReminders();
 // Extra sync after DOM settles to fix yr-btn showing 2001
 setTimeout(function(){
