@@ -959,8 +959,18 @@ async function loadFromFirebase(uid) {
       DB.inv = data.inv || [];
       DB.exp = data.exp || [];
       DB.loan = data.loan || [];
+      // Categories sync
+      if(data.cats && data.cats.length) {
+        saveCats(data.cats);
+        fillCats();
+      }
+      // Currencies sync
+      if(data.curs && data.curs.length) {
+        saveCurs(data.curs);
+        fillAllCurSelects();
+        renderCurChips();
+      }
     } else {
-      // নতুন user বা Firestore-এ কোনো data নেই — পুরনো localStorage data leak হওয়া থেকে আটকাতে DB খালি করে দাও
       DB.sal = []; DB.tr = []; DB.sam = []; DB.inv = []; DB.exp = []; DB.loan = [];
     }
     saveDB();
@@ -984,7 +994,7 @@ async function loadFromFirebase(uid) {
 
 // SAVE DATA TO FIREBASE
 window.saveToFirebase = async function() {
-  if (PREVIEW_MODE) return; // preview mode-এ Firebase save skip
+  if (PREVIEW_MODE) return;
   var uid = window._currentUserId;
   if (!uid) return;
   try {
@@ -993,6 +1003,8 @@ window.saveToFirebase = async function() {
     await setDoc(docRef, {
       sal: DB.sal, tr: DB.tr, sam: DB.sam,
       inv: DB.inv, exp: DB.exp, loan: DB.loan,
+      cats: loadCats(),
+      curs: loadCurs(),
       updatedAt: new Date().toISOString()
     });
     setSyncStatus('✅ Synced');
@@ -1278,9 +1290,15 @@ function saveDB(){
 }
 
 function loadCats(){ try{var d=localStorage.getItem(CATS_KEY);return d?JSON.parse(d):[...DEFAULT_CATS];}catch(e){return [...DEFAULT_CATS];} }
-function saveCats(c){ try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catch(e){} }
+function saveCats(c){
+  try{localStorage.setItem(CATS_KEY,JSON.stringify(c));}catch(e){}
+  if(window.saveToFirebase){clearTimeout(window._fbSaveTimer);window._fbSaveTimer=setTimeout(window.saveToFirebase,1500);}
+}
 function loadCurs(){ try{var d=localStorage.getItem(CURS_KEY);return d?JSON.parse(d):[...DEFAULT_CURS];}catch(e){return [...DEFAULT_CURS];} }
-function saveCurs(c){ try{localStorage.setItem(CURS_KEY,JSON.stringify(c));}catch(e){} }
+function saveCurs(c){
+  try{localStorage.setItem(CURS_KEY,JSON.stringify(c));}catch(e){}
+  if(window.saveToFirebase){clearTimeout(window._fbSaveTimer);window._fbSaveTimer=setTimeout(window.saveToFirebase,1500);}
+}
 
 
 var DB=loadDB();
@@ -2414,7 +2432,14 @@ function renderExp(){
     (!fcur||r.currency===fcur)&&
     (!q||r.category.toLowerCase().includes(q)||r.currency.toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q));
   });
-  var filteredExp=DB.exp.filter(function(r){return r.currency===selExpCur;});
+  var now=new Date();
+  var curYr=now.getFullYear().toString();
+  var curMo=now.toLocaleString('en',{month:'short'});
+  var filteredExp=DB.exp.filter(function(r){
+    var useYr=(yr==='all')?curYr:yr;
+    var useMo=(mo==='all')?curMo:mo;
+    return r.currency===selExpCur && r.year===useYr && r.month===useMo;
+  });
   var totCur=filteredExp.reduce(function(s,r){return s+r.amount;},0);
   var byCat2={};
   filteredExp.forEach(function(r){byCat2[r.category]=(byCat2[r.category]||0)+r.amount;});
@@ -2425,7 +2450,7 @@ function renderExp(){
     if(expStatsEl) expStatsEl.innerHTML=
       '<div class="stat-box red" style="grid-column:1/-1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-      +'<div class="stat-label" style="margin:0;">💳 Total Expense</div>'
+      +'<div class="stat-label" style="margin:0;">💳 '+(yr==='all'&&mo==='all'?curMo+' '+curYr:(mo==='all'?yr:mo+' '+yr))+' Total</div>'
       +'<select onchange="window._cs.exp=this.value;_pages.exp=1;renderExp()" style="padding:4px 8px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;">'+expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('')+'</select>'
       +'</div>'
       +'<div class="stat-value">'+N(totCur)+' <span style="font-size:11px;font-weight:400;color:var(--muted);">'+selExpCur+'</span></div>'
@@ -2944,18 +2969,25 @@ function renderDash(){
   }
 
   // ---- EXPENSE (A style) ----
+  var now=new Date();
+  var curYr=now.getFullYear().toString();
+  var curMo=MOS[now.getMonth()];
   var expCurs=[...new Set(DB.exp.map(function(r){return r.currency;}))];
   if(expCurs.length>0){
     var selExpCur=document.getElementById('d-exp-cur')?document.getElementById('d-exp-cur').value:'';
     if(expCurs.indexOf(selExpCur)<0) selExpCur=expCurs[0];
     var expCurOpts=expCurs.map(function(c){return '<option value="'+c+'"'+(c===selExpCur?' selected':'')+'>'+c+'</option>';}).join('');
-    var expFiltered=expD.filter(function(r){return r.currency===selExpCur;});
+    // যদি filter না থাকে তাহলে current month দেখাও
+    var useYr=(yr==='all')?curYr:yr;
+    var useMo=(mo==='all')?curMo:mo;
+    var expFiltered=DB.exp.filter(function(r){return r.currency===selExpCur&&r.year===useYr&&r.month===useMo;});
     var tExpCur=expFiltered.reduce(function(s,r){return s+r.amount;},0);
+    var expLabel=(yr==='all'&&mo==='all')?curMo+' '+curYr:(mo==='all'?yr:mo+' '+yr);
     var byCat={};
     expFiltered.forEach(function(r){byCat[r.category]=(byCat[r.category]||0)+r.amount;});
     stats+='<div class="stat-box red" style="text-align:center;padding:10px 8px;">'
       +'<div style="font-size:22px;">💳</div>'
-      +'<div style="font-size:9px;color:var(--muted);font-weight:600;margin:2px 0;">EXPENSE</div>'
+      +'<div style="font-size:9px;color:var(--muted);font-weight:600;margin:2px 0;">'+expLabel+'</div>'
       +'<div style="font-size:15px;font-weight:700;">'+N(tExpCur)+'</div>'
       +'<select id="d-exp-cur" onchange="renderDash()" style="margin-top:4px;padding:2px 4px;font-size:9px;border:1.5px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-family:inherit;width:100%;">'+expCurOpts+'</select>'
       +'</div>';
@@ -2968,20 +3000,14 @@ function renderDash(){
   }
 
   // ---- LOAN (split into 2 small cards like others) ----
-  var loanDFiltered=DB.loan.filter(function(r){
-    if(!r.date) return (yr==='all'&&mo==='all');
-    var dd=new Date(r.date);
-    var ry=String(dd.getFullYear());
-    var rm=MOS[dd.getMonth()];
-    return (yr==='all'||ry===yr)&&(mo==='all'||rm===mo);
-  });
-  var loanCurs=[...new Set(loanDFiltered.map(function(r){return r.currency;}))];
+  // Loan — date filter নয়, সব সময় সব loan দেখাবে (remaining amount)
+  var loanCurs=[...new Set(DB.loan.map(function(r){return r.currency;}))];
   if(loanCurs.length>0){
     var selLoanCur=document.getElementById('d-loan-cur')?document.getElementById('d-loan-cur').value:loanCurs[0];
     if(loanCurs.indexOf(selLoanCur)<0) selLoanCur=loanCurs[0];
     var loanOpts=loanCurs.map(function(c){return '<option value="'+c+'"'+(c===selLoanCur?' selected':'')+'>'+c+'</option>';}).join('');
-    var lOwed=loanDFiltered.filter(function(r){return r.type==='owe'&&r.currency===selLoanCur;}).reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
-    var lLent=loanDFiltered.filter(function(r){return r.type==='lend'&&r.currency===selLoanCur;}).reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
+    var lOwed=DB.loan.filter(function(r){return r.type==='owe'&&r.currency===selLoanCur;}).reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
+    var lLent=DB.loan.filter(function(r){return r.type==='lend'&&r.currency===selLoanCur;}).reduce(function(s,r){return s+(r.amount-(r.paid||0));},0);
     stats+='<div class="stat-box orange" style="grid-column:1/-1;padding:14px 16px;">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
       +'<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:20px;">🤲</span><span style="font-size:13px;font-weight:700;color:var(--text);">Loan</span></div>'
